@@ -1,0 +1,251 @@
+.carsSec {
+  padding-block: 100px;
+
+  .nav {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+
+    h2 {
+      font-size: 24px;
+      display: flex;
+      gap: 8px;
+      span {
+        color: #c89b45;
+      }
+    }
+
+    .mainBtns {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      width: 100%;
+      margin-block: 10px;
+
+      .tables {
+        display: flex;
+        gap: 20px;
+
+        select {
+          width: 170px;
+          height: 38px;
+          border-radius: 5px;
+          border: 1px solid #c89b45;
+          padding: 0 10px;
+          outline: none;
+          background: transparent;
+          color: inherit; 
+          cursor: pointer;
+
+          option {
+            background: #1a1a1a; 
+            color: white;
+          }
+        }
+      }
+
+      button {
+        width: 200px;
+        height: 40px;
+        border-radius: 5px;
+        border: none;
+        background: #b68a3d;
+        color: white;
+        font-weight: 600;
+        cursor: pointer;
+        transition: 0.5s;
+        &:hover {
+          transform: scale(1.03);
+        }
+      }
+    }
+
+    .carsCards {
+      display: flex;
+      gap: 25px;
+      flex-wrap: wrap;
+    }
+  }
+
+  /* --- МОДАЛЬНОЕ ОКНО --- */
+  .modalBg {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.65); 
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 99;
+    backdrop-filter: blur(4px); 
+  }
+
+  .modal {
+    width: 520px;
+    background: white;
+    border-radius: 15px;
+    padding: 25px;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+    display: flex;
+    align-items: center;
+    text-align: center;
+    flex-direction: column;
+    gap: 15px;
+    z-index: 100;
+    position: relative;
+    color: #111; 
+
+    .close {
+      position: absolute;
+      top: 15px;
+      right: 15px;
+      font-size: 24px;
+      cursor: pointer;
+      color: #777;
+      transition: 0.2s;
+      &:hover {
+        color: #000;
+      }
+    }
+
+    .modalImg {
+      display: flex;
+      align-items: center;
+      gap: 15px;
+      position: relative;
+
+      img {
+        width: 380px;
+        height: 230px;
+        object-fit: cover;
+        border-radius: 12px;
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+      }
+
+      button {
+        background: #b68a3d;
+        color: white;
+        border: none;
+        width: 35px;
+        height: 35px;
+        border-radius: 50%;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: 0.2s;
+        &:hover {
+          background: #c79a4d;
+          transform: scale(1.05);
+        }
+      }
+    }
+
+    h2 {
+      font-size: 22px;
+      margin: 0;
+      font-weight: 600;
+    }
+
+    p {
+      color: #555;
+      font-size: 13px;
+      line-height: 1.5;
+      max-width: 90%;
+    }
+
+    .detail {
+      width: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: space-around;
+      border-top: 1px solid #eee;
+      border-bottom: 1px solid #eee;
+      padding-block: 10px;
+      margin-block: 5px;
+
+      h4 {
+        font-weight: 500;
+        font-size: 15px;
+        margin: 0;
+        span {
+          color: #b68a3d;
+          font-weight: 700;
+        }
+      }
+    }
+
+    .buy {
+      margin-top: 10px;
+      width: 100%;
+      height: 42px;
+      background: #b68a3d;
+      border: none;
+      border-radius: 8px;
+      color: white;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: 0.2s;
+      &:hover {
+        background: #c79a4d;
+      }
+    }
+
+    /* --- СТИЛИ КНОПОК СОЦ. СЕТЕЙ ДЛЯ СВЯЗИ --- */
+    .contactBtn {
+      margin-top: 10px;
+      width: 100%;
+      height: 44px;
+      border-radius: 8px;
+      color: white;
+      font-weight: 600;
+      text-decoration: none;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      font-size: 15px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+
+      svg {
+        font-size: 20px;
+      }
+
+      &:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 6px 20px rgba(0, 0, 0, 0.25);
+        filter: brightness(1.1);
+      }
+
+      /* Telegram Стили */
+      &.telegram {
+        background: #229ed9;
+      }
+
+      /* WhatsApp Стили */
+      &.whatsapp {
+        background: #25d366;
+      }
+
+      /* Instagram Стили */
+      &.instagram {
+        background: linear-gradient(45deg, #f09433 0%, #e6683c 25%, #dc2743 50%, #cc2366 75%, #bc1888 100%);
+      }
+
+      /* TikTok Стили */
+      &.tiktok {
+        background: #010101;
+        border: 1px solid #fe2c55;
+      }
+
+      /* Email Стили */
+      &.email {
+        background: #ea4335;
+      }
+    }
+  }
+}

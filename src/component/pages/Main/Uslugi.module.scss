@@ -1,0 +1,177 @@
+// Секция услуг на главной
+.uslugSec {
+  padding: 100px 0;
+}
+
+.loadingText {
+  text-align: center;
+  font-size: 18px;
+  font-weight: 700;
+  color: #222;
+  padding: 40px 0;
+}
+
+.nav {
+  max-width: 950px;
+  margin: auto;
+  padding: 0 20px;
+  display: flex;
+  align-items: center;
+  flex-direction: column;
+
+  h2 {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 32px;
+    font-weight: 800;
+    color: #222;
+    margin-bottom: 40px;
+    border-bottom: 1px solid #ececec;
+    padding-bottom: 25px;
+
+    span {
+      display: flex;
+      align-items: center;
+      color: #d1a959; // Делаем звездочки золотыми
+    }
+  }
+}
+
+// Сетка карточек (Синхронизировано с детейлингом)
+.usBlocks {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 30px;
+}
+
+// Карточка услуги
+.usCard {
+  position: relative; // Для позиционирования темного экрана (overlay)
+  background: #fafafa;
+  border: 1px solid #ececec;
+  border-radius: 18px;
+  padding: 30px 20px 25px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  justify-content: space-between;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  overflow: hidden; // Чтобы оверлей не вылезал за скругления углов
+
+  &:hover:not(.disabled) {
+    transform: translateY(-5px);
+    border-color: #d1a959;
+    box-shadow: 0 12px 25px rgba(209, 169, 89, 0.12);
+
+    .orderButton {
+      background: #c39b4b;
+      box-shadow: 0 4px 12px rgba(209, 169, 89, 0.3);
+    }
+  }
+}
+
+.cardContent {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+}
+
+// Блок с круглой иконкой-смайликом
+.iconBlock {
+  font-size: 36px;
+  background: #fff;
+  width: 75px;
+  height: 75px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  border: 1px solid #eaeaea;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.03);
+}
+
+h3 {
+  margin: 20px 0;
+  font-size: 17px;
+  font-weight: 600;
+  line-height: 1.4;
+  color: #222;
+  min-height: 48px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+// Элегантная золотая кнопка
+.orderButton {
+  width: 100%;
+  background: #d1a959;
+  color: #fff;
+  border: none;
+  padding: 11px 0;
+  border-radius: 10px;
+  font-size: 14px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.25s ease;
+  margin-top: 10px;
+}
+
+// Темный экран (Оверлей) для отключенных карточек
+.overlayDisabled {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(17, 17, 17, 0.85); // Глубокий темный полупрозрачный фон
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 5;
+  backdrop-filter: blur(2px); // Легкое премиальное размытие
+
+  span {
+    color: #ff4d4d;
+    background: rgba(255, 77, 77, 0.15);
+    border: 1px solid rgba(255, 77, 77, 0.4);
+    padding: 8px 18px;
+    border-radius: 30px;
+    font-weight: 700;
+    font-size: 14px;
+    letter-spacing: 0.5px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+  }
+}
+
+.disabled {
+  cursor: not-allowed;
+  pointer-events: none; // Полностью отключает клики
+}
+
+// Адаптив под мобилки и планшеты
+@media (max-width: 900px) {
+  .usBlocks {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 20px;
+  }
+}
+
+@media (max-width: 600px) {
+  .usBlocks {
+    grid-template-columns: 1fr;
+    gap: 20px;
+  }
+
+  .nav {
+    padding: 0 10px;
+
+    h2 {
+      font-size: 26px;
+    }
+  }
+}

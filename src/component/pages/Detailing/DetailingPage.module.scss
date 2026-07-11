@@ -1,0 +1,174 @@
+.profilePage {
+  min-height: 100vh;
+  padding: 120px 0 60px;
+  background: #ffffff; // Фон всей страницы изменен на полностью белый
+}
+
+.errorAuth {
+  padding-top: 120px;
+  text-align: center;
+  font-size: 18px;
+  font-weight: 700;
+  color: #222;
+}
+
+.card {
+  max-width: 950px;
+  margin: auto;
+  background: #ffffff; // Чисто белый фон, без внутренних рамок
+  border-radius: 20px;
+  padding: 35px 20px;
+}
+
+.top {
+  display: flex;
+  align-items: center;
+  gap: 25px;
+  margin-bottom: 40px;
+  border-bottom: 1px solid #ececec;
+  padding-bottom: 25px;
+}
+
+.userInfo {
+  h1 {
+    font-size: 32px;
+    margin-bottom: 10px;
+    color: #222;
+    font-weight: 800;
+  }
+  p {
+    color: #777;
+    font-size: 15px;
+  }
+}
+
+// Сетка карточек
+.servicesGrid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 30px;
+}
+
+.serviceItem {
+  position: relative; // Для позиционирования темного экрана (overlay)
+  background: #fafafa;
+  border: 1px solid #ececec;
+  border-radius: 18px;
+  padding: 30px 20px 25px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  justify-content: space-between;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  overflow: hidden; // Чтобы оверлей не вылезал за скругления углов
+
+  &:hover:not(.disabled) {
+    transform: translateY(-5px);
+    border-color: #d1a959;
+    box-shadow: 0 12px 25px rgba(209, 169, 89, 0.12);
+
+    .orderButton {
+      background: #c39b4b;
+      box-shadow: 0 4px 12px rgba(209, 169, 89, 0.3);
+    }
+  }
+}
+
+.cardContent {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+}
+
+.iconBlock {
+  font-size: 36px;
+  background: #fff;
+  width: 75px;
+  height: 75px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  border: 1px solid #eaeaea;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.03);
+}
+
+h3 {
+  margin: 20px 0;
+  font-size: 17px;
+  font-weight: 600;
+  line-height: 1.4;
+  color: #222;
+  min-height: 48px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+// Элегантная золотая кнопка призыва к действию
+.orderButton {
+  width: 100%;
+  background: #d1a959;
+  color: #fff;
+  border: none;
+  padding: 11px 0;
+  border-radius: 10px;
+  font-size: 14px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.25s ease;
+  margin-top: 10px;
+}
+
+// Темный экран (Оверлей) для отключенных карточек
+.overlayDisabled {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(17, 17, 17, 0.85); // Глубокий темный полупрозрачный фон
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 5;
+  backdrop-filter: blur(2px); // Легкое премиальное размытие заднего плана
+
+  span {
+    color: #ff4d4d;
+    background: rgba(255, 77, 77, 0.15);
+    border: 1px solid rgba(255, 77, 77, 0.4);
+    padding: 8px 18px;
+    border-radius: 30px;
+    font-weight: 700;
+    font-size: 14px;
+    letter-spacing: 0.5px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+  }
+}
+
+.disabled {
+  cursor: not-allowed;
+  pointer-events: none; // Полностью отключает любые клики по карточке
+}
+
+@media (max-width: 900px) {
+  .servicesGrid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 20px;
+  }
+}
+
+@media (max-width: 600px) {
+  .servicesGrid {
+    grid-template-columns: 1fr;
+    gap: 20px;
+  }
+
+  .card {
+    padding: 20px 10px;
+  }
+}

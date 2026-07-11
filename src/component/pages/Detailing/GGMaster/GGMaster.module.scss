@@ -1,0 +1,251 @@
+$gold-primary: #d1a959;
+$gold-hover: #b68a3d;
+$text-dark: #111111;
+$text-muted: gray;
+$border-color: #ececec;
+$card-shadow: 0 15px 40px rgba(0, 0, 0, 0.08);
+
+.profilePage {
+  min-height: 100vh;
+  padding: 100px 20px 60px;
+  font-family: "Inter", sans-serif;
+  color: $text-dark;
+  background: white;
+}
+
+.mainCard {
+  width: 100%;
+  margin: auto;
+  border-radius: 20px;
+  padding: 35px;
+  background: white;
+}
+
+.headerSection {
+  text-align: center;
+  margin-bottom: 35px;
+}
+
+.mainTitle {
+  font-size: 32px;
+  margin-bottom: 10px;
+  font-weight: 700;
+}
+
+.description {
+  color: $text-muted;
+  font-size: 15px;
+  max-width: 600px;
+  margin: 0 auto;
+  line-height: 1.5;
+}
+
+/* Разделы прайс-листа */
+.sectionBlock {
+  margin-top: 35px;
+}
+
+.blockTitle {
+  font-size: 22px;
+  color: $gold-primary;
+  margin-bottom: 20px;
+  font-weight: 700;
+}
+
+/* Сетка услуг */
+.grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 20px;
+}
+
+.item {
+  background: #fafafa;
+  border: 1px solid $border-color;
+  border-radius: 15px;
+  padding: 10px;
+  display: flex;
+  align-items: center;
+  flex-direction: column;
+  justify-content: space-between;
+  gap: 12px;
+  width: 300px;
+
+  h3 {
+    margin: 0;
+    font-size: 18px;
+    font-weight: 600;
+    text-align: center;
+  }
+}
+
+/* Строка цен */
+.priceRow {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+
+  span {
+    width: 80px;
+    height: 30px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 30px;
+    font-weight: 700;
+    font-size: 13px;
+  }
+
+  .som {
+    background: #ececec;
+    color: $text-dark;
+  }
+
+  .stars {
+    background: rgba($gold-primary, 0.15);
+    color: $gold-hover;
+    border: 1px solid rgba($gold-primary, 0.2);
+  }
+}
+
+/* Нижняя кнопка */
+.actionContainer {
+  margin-top: 40px;
+  text-align: center;
+}
+
+.addCar {
+  width: 100%;
+  height: 55px;
+  border: none;
+  border-radius: 12px;
+  font-size: 16px;
+  font-weight: 700;
+  cursor: pointer;
+  background: $gold-primary;
+  color: white;
+  transition: 0.3s;
+
+  &:hover {
+    background: $gold-hover;
+    transform: translateY(-2px);
+  }
+}
+
+/* Модальное окно */
+.modalOverlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100vh;
+  background: rgba(0, 0, 0, 0.4);
+  backdrop-filter: blur(4px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 9999;
+  animation: fadeIn 0.2s ease;
+}
+
+.modalContent {
+  background: white;
+  padding: 35px;
+  border-radius: 20px;
+  max-width: 480px;
+  width: 90%;
+  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.15);
+  text-align: center;
+  animation: scaleUp 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+
+  h2 {
+    font-size: 24px;
+    margin-bottom: 15px;
+    color: $text-dark;
+  }
+
+  p {
+    color: $text-muted;
+    font-size: 15px;
+    line-height: 1.6;
+    margin-bottom: 25px;
+  }
+}
+
+.modalActions {
+  display: flex;
+  gap: 15px;
+
+  button {
+    flex: 1;
+    height: 50px;
+    border: none;
+    border-radius: 12px;
+    font-size: 15px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: 0.2s;
+  }
+}
+
+.cancelBtn {
+  background: #ececec;
+  color: $text-dark;
+
+  &:hover {
+    background: #dbdbdb;
+  }
+}
+
+.telegramBtn {
+  background: #229ed9;
+  color: white;
+
+  &:hover {
+    background: #1e8ec3;
+  }
+
+  &:disabled {
+    background: #a2d4ec;
+    cursor: not-allowed;
+  }
+}
+
+.loader {
+  text-align: center;
+  padding: 100px 20px;
+  font-size: 18px;
+  color: $gold-primary;
+  font-weight: 700;
+}
+
+/* Адаптивность */
+@media (max-width: 700px) {
+  .grid {
+    grid-template-columns: 1fr;
+  }
+
+  .modalActions {
+    flex-direction: column-reverse;
+  }
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes scaleUp {
+  from {
+    transform: scale(0.95);
+    opacity: 0;
+  }
+  to {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
