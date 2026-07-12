@@ -12,7 +12,7 @@ const LiderAbout = () => {
   useEffect(() => {
     const unsubscribe = onSnapshot(
       collection(db, "clan_leaders"),
-      (snapshot) => { 
+      (snapshot) => {
         const data = [];
         snapshot.forEach((doc) => {
           data.push({ fireId: doc.id, ...doc.data() });
@@ -31,23 +31,27 @@ const LiderAbout = () => {
       <div className="container">
         <div className={scss.nav}>
           <h2>
-            <span>
+            <span aria-hidden="true">
               <FaCrown />
-            </span>{" "}
+            </span>
             Лидеры
           </h2>
           <div className={scss.lidersBlocks}>
             {leaders.map((el) => (
-              <div className={scss.liderBlock} key={el.fireId}>
-                <span>
-                  <GiLaurelCrown className={scss.crwn} />
+              <article className={scss.liderBlock} key={el.fireId}>
+                <span className={scss.badge}>
+                  <GiLaurelCrown className={scss.crwn} aria-hidden="true" />
                   LEADER
                 </span>
-                <img src={el.profile} alt={el.nickname} />
+                <img
+                  src={el.profile}
+                  alt={`Лидер клана ${el.nickname}`}
+                  loading="lazy"
+                />
                 <h3>{el.nickname}</h3>
                 <div className={scss.id}>ID: {el.id}</div>
                 <div className={scss.gosNom}>{el.gosNom}</div>
-              </div>
+              </article>
             ))}
           </div>
         </div>

@@ -1,33 +1,25 @@
 import React, { useState, useEffect } from "react";
 import scss from "./Create.module.scss";
-
-import { FaCar, FaGoogle, FaImage } from "react-icons/fa";
+import { FaCar, FaImage } from "react-icons/fa";
 import { MdOutlineDescription, MdVerified } from "react-icons/md";
-
-// Импорт React Toastify
 import { toast } from "react-toastify";
-
-// Импорты Firebase
-import { db, storage, auth } from "../../../firebase/FireBase";
-import { onAuthStateChanged } from "firebase/auth";
+import { db, storage } from "../../../firebase/FireBase";
 import {
-  doc,
-  getDoc,
   addDoc,
   collection,
+  doc,
   updateDoc,
   increment,
 } from "firebase/firestore";
 import { ref, uploadBytesResumable, getDownloadURL } from "firebase/storage";
+import { useUserProfile } from "../../layout/Profile/useUserProfile";
 
 const Create = () => {
-  // Состояния пользователя
-  const [user, setUser] = useState(null);
-  const [userData, setUserData] = useState(null);
+  const { profile, loading: profileLoading } = useUserProfile();
+
   const [loading, setLoading] = useState(false);
   const [userAdsCount, setUserAdsCount] = useState(0);
 
-  // Состояния полей формы
   const [title, setTitle] = useState("");
   const [price, setPrice] = useState("");
   const [currency, setCurrency] = useState("С Сом");
@@ -37,53 +29,45 @@ const Create = () => {
   const [contactValue, setContactValue] = useState("");
   const [description, setDescription] = useState("");
 
-  // Состояния для картинок
   const [images, setImages] = useState([null, null, null]);
   const [previews, setPreviews] = useState([null, null, null]);
 
-  // Лимиты плана
-  const maxLimit = userData?.plan === "vip" ? 20 : 10;
-
   useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, async (currentUser) => {
-      if (currentUser) {
-        setUser(currentUser);
+    if (profile) {
+      setUserAdsCount(profile.adsUsed || 0);
+    }
+  }, [profile]);
 
-        try {
-          const userDocRef = doc(db, "users", currentUser.uid);
-          const userDocSnap = await getDoc(userDocRef);
+  if (profileLoading) {
+    return (
+      <h2 style={{ textAlign: "center", marginTop: "50px" }}>
+        Загрузка профиля...
+      </h2>
+    );
+  }
 
-          if (userDocSnap.exists()) {
-            const data = userDocSnap.data();
-            setUserData(data);
-            setUserAdsCount(data.adsUsed || 0);
-          } else {
-            console.warn(
-              "Документ пользователя не найден в коллекции users по его UID",
-            );
-            setUserAdsCount(0);
-          }
-        } catch (error) {
-          console.error("Ошибка при получении данных профиля:", error);
-        }
-      } else {
-        setUser(null);
-        setUserData(null);
-        setUserAdsCount(0);
-      }
-    });
+  if (!profile) {
+    return (
+      <h2 style={{ textAlign: "center", color: "red", marginTop: "50px" }}>
+        Пожалуйста, войдите в аккаунт!
+      </h2>
+    );
+  }
 
-    return () => unsubscribe();
-  }, []);
+  const currentUserUid = profile.uid;
+  const currentUserEmail = profile.email;
+  const currentUserPlan = profile.plan || "free";
+  const currentUserRole = profile.role || "member";
+  const currentUserMarketStatus = profile.marketStatus || "inactive";
+
+  const maxLimit = currentUserPlan === "vip" ? 20 : 10;
 
   const handleImageChange = (index, e) => {
     const file = e.target.files[0];
     if (file) {
-      // Если на этом месте уже было превью, удаляем его из памяти браузера
       if (previews[index]) {
         URL.revokeObjectURL(previews[index]);
       }
-
       const newImages = [...images];
       newImages[index] = file;
       setImages(newImages);
@@ -94,14 +78,10 @@ const Create = () => {
     }
   };
 
-  const uploadImageAsync = (file, userUid) => {
+  const uploadImageAsync = (file, uid) => {
     return new Promise((resolve, reject) => {
-      const storageRef = ref(
-        storage,
-        `cars/${userUid}/${Date.now()}_${file.name}`,
-      );
+      const storageRef = ref(storage, `cars/${uid}/${Date.now()}_${file.name}`);
       const uploadTask = uploadBytesResumable(storageRef, file);
-
       uploadTask.on(
         "state_changed",
         null,
@@ -117,8 +97,7 @@ const Create = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    if (!user) return toast.error("Пожалуйста, войдите в аккаунт!");
-    if (userData?.marketStatus !== "active") {
+    if (currentUserMarketStatus !== "active") {
       return toast.error(
         "У вас нет доступа к публикациям. Обратитесь к администрации.",
       );
@@ -141,13 +120,11 @@ const Create = () => {
 
     try {
       const uploadPromises = images.map((img) =>
-        img ? uploadImageAsync(img, user.uid) : null,
+        img ? uploadImageAsync(img, currentUserUid) : null,
       );
-
       const uploadedUrls = await Promise.all(uploadPromises);
       const carImages = uploadedUrls.filter((url) => url !== null);
 
-      // Сохраняем объявление в БД
       await addDoc(collection(db, "cars"), {
         title,
         price: Number(price),
@@ -159,29 +136,23 @@ const Create = () => {
         description,
         images: carImages,
         createdAt: new Date(),
-
-        authorUid: user.uid,
-        authorEmail: user.email,
-        authorStatus: userData?.plan || "free",
-        authorRole: userData?.role || "member",
-
-        isVip: userData?.plan === "vip",
+        authorUid: currentUserUid,
+        authorEmail: currentUserEmail,
+        authorStatus: currentUserPlan,
+        authorRole: currentUserRole,
+        isVip: currentUserPlan === "vip",
         verified: true,
       });
 
-      const userDocRef = doc(db, "users", user.uid);
-      await updateDoc(userDocRef, {
-        adsUsed: increment(1),
-      });
+      const userDocRef = doc(db, "users", currentUserUid);
+      await updateDoc(userDocRef, { adsUsed: increment(1) });
 
       toast.success("Автомобиль успешно опубликован в авторынке!");
 
-      // Освобождаем память от созданных blob-ссылок
       previews.forEach((url) => {
         if (url) URL.revokeObjectURL(url);
       });
 
-      // Очищаем форму
       setTitle("");
       setPrice("");
       setPower("");
@@ -191,81 +162,96 @@ const Create = () => {
       setDescription("");
       setImages([null, null, null]);
       setPreviews([null, null, null]);
-
       setUserAdsCount((prev) => prev + 1);
     } catch (error) {
-      console.error("Ошибка при добавлении машины:", error);
+      console.error(error);
       toast.error("Не удалось опубликовать автомобиль.");
     } finally {
       setLoading(false);
     }
   };
 
+  const labels = ["Перед", "Бок", "Зад"];
+
   return (
-    <section className={scss.create}>
+    <main role="main" className={scss.create}>
       <div className="container">
-        <div className={scss.title}>
+        <header className={scss.title}>
           <h1>
-            <FaCar />
-            Разместить автомобиль
+            <FaCar aria-hidden="true" /> Разместить автомобиль
           </h1>
           <p>
             После публикации объявление моментально появится на авторынке клана.
           </p>
-        </div>
+        </header>
 
         <form onSubmit={handleSubmit} className={scss.content}>
-          {/* LEFT */}
-          <div className={scss.left}>
-            <div className={scss.card}>
-              <h2>
-                <FaImage />
-                Фотографии
-              </h2>
-
-              <div className={scss.photos}>
-                {[0, 1, 2].map((index) => {
-                  const labels = ["Перед", "Бок", "Зад"];
-                  return (
-                    <label
-                      key={index}
-                      className={scss.photo}
-                      style={{
-                        backgroundImage: previews[index]
-                          ? `url(${previews[index]})`
-                          : "none",
-                        backgroundSize: "cover",
-                        backgroundPosition: "center",
-                      }}
-                    >
-                      <input
-                        hidden
-                        type="file"
-                        accept="image/*"
-                        onChange={(e) => handleImageChange(index, e)}
-                      />
-                      {!previews[index] && (
-                        <>
-                          <span>+</span>
-                          <p>{labels[index]}</p>
-                        </>
-                      )}
-                    </label>
-                  );
-                })}
+          <div className={scss.profileMobile}>
+            <section className={scss.profile}>
+              <h2>Ваш профиль</h2>
+              <div className={scss.info}>
+                <FaCar aria-hidden="true" />
+                <div>
+                  <span>Тариф</span>
+                  <p>{currentUserPlan === "vip" ? "⭐ VIP" : "👤 FREE"}</p>
+                </div>
               </div>
-            </div>
+              <div className={scss.info}>
+                <MdVerified aria-hidden="true" />
+                <div>
+                  <span>Мест использовано</span>
+                  <p>
+                    {userAdsCount} / {maxLimit}
+                  </p>
+                </div>
+              </div>
+            </section>
+          </div>
 
-            <div className={scss.card}>
-              <h2>
-                <FaCar />
-                Информация и контакты
-              </h2>
+          <div className={scss.left}>
+            <section className={scss.card}>
+              <h3>
+                <FaImage aria-hidden="true" /> Фотографии
+              </h3>
+              <div className={scss.photos}>
+                {images.map((_, index) => (
+                  <label
+                    key={index}
+                    className={scss.photo}
+                    style={{
+                      backgroundImage: previews[index]
+                        ? `url(${previews[index]})`
+                        : "none",
+                      backgroundSize: "cover",
+                      backgroundPosition: "center",
+                    }}
+                  >
+                    <input
+                      hidden
+                      type="file"
+                      accept="image/*"
+                      onChange={(e) => handleImageChange(index, e)}
+                    />
+                    {!previews[index] && (
+                      <>
+                        <span>+</span>
+                        <p>{labels[index]}</p>
+                      </>
+                    )}
+                  </label>
+                ))}
+              </div>
+            </section>
 
+            <section className={scss.card}>
+              <h3>
+                <FaCar aria-hidden="true" /> Информация и контакты
+              </h3>
               <div className={scss.inputs}>
                 <div className={scss.inputBox}>
-                  <label>Название</label>
+                  <label htmlFor="title">Название</label>
                   <input
+                    id="title"
                     type="text"
                     placeholder="BMW M5 F90"
                     value={title}
@@ -275,8 +261,9 @@ const Create = () => {
                 </div>
 
                 <div className={scss.inputBox}>
-                  <label>Цена</label>
+                  <label htmlFor="price">Цена</label>
                   <input
+                    id="price"
                     type="number"
                     placeholder="2500"
                     value={price}
@@ -286,8 +273,9 @@ const Create = () => {
                 </div>
 
                 <div className={scss.inputBox}>
-                  <label>Валюта</label>
+                  <label htmlFor="currency">Валюта</label>
                   <select
+                    id="currency"
                     value={currency}
                     onChange={(e) => setCurrency(e.target.value)}
                   >
@@ -300,8 +288,9 @@ const Create = () => {
                 </div>
 
                 <div className={scss.inputBox}>
-                  <label>Мощность</label>
+                  <label htmlFor="power">Мощность</label>
                   <input
+                    id="power"
                     type="number"
                     placeholder="1695"
                     value={power}
@@ -311,8 +300,9 @@ const Create = () => {
                 </div>
 
                 <div className={scss.inputBox}>
-                  <label>Тип Машины</label>
+                  <label htmlFor="carType">Тип Машины</label>
                   <select
+                    id="carType"
                     value={carType}
                     onChange={(e) => setCarType(e.target.value)}
                   >
@@ -323,8 +313,9 @@ const Create = () => {
                 </div>
 
                 <div className={scss.inputBox}>
-                  <label>Способ связи</label>
+                  <label htmlFor="contactType">Способ связи</label>
                   <select
+                    id="contactType"
                     value={contactType}
                     onChange={(e) => setContactType(e.target.value)}
                   >
@@ -337,8 +328,11 @@ const Create = () => {
                 </div>
 
                 <div className={`${scss.inputBox} ${scss.fullWidth}`}>
-                  <label>Ссылка или Никнейм/Номер контакта</label>
+                  <label htmlFor="contactValue">
+                    Ссылка или Никнейм/Номер контакта
+                  </label>
                   <input
+                    id="contactValue"
                     type="text"
                     placeholder={
                       contactType === "WhatsApp"
@@ -355,53 +349,44 @@ const Create = () => {
               </div>
 
               <div className={scss.description}>
-                <label>
-                  <MdOutlineDescription />
-                  Описание
+                <label htmlFor="description">
+                  <MdOutlineDescription aria-hidden="true" /> Описание
                 </label>
                 <textarea
+                  id="description"
                   placeholder="Опишите автомобиль..."
                   value={description}
                   onChange={(e) => setDescription(e.target.value)}
                   required
                 ></textarea>
               </div>
-            </div>
+            </section>
           </div>
 
-          {/* RIGHT */}
           <div className={scss.right}>
-            <div className={scss.profile}>
-              <h2>Ваш профиль</h2>
-
-              <div className={scss.info}>
-                <FaGoogle />
-                <div>
-                  <span>Google</span>
-                  <p>{user ? user.email : "Загрузка..."}</p>
+            <section className={scss.profileDesktop}>
+              <div className={scss.profile}>
+                <h2>Ваш профиль</h2>
+                <div className={scss.info}>
+                  <FaCar aria-hidden="true" />
+                  <div>
+                    <span>Тариф</span>
+                    <p>{currentUserPlan === "vip" ? "⭐ VIP" : "👤 FREE"}</p>
+                  </div>
+                </div>
+                <div className={scss.info}>
+                  <MdVerified aria-hidden="true" />
+                  <div>
+                    <span>Мест использовано</span>
+                    <p>
+                      {userAdsCount} / {maxLimit}
+                    </p>
+                  </div>
                 </div>
               </div>
+            </section>
 
-              <div className={scss.info}>
-                <MdVerified />
-                <div>
-                  <span>Тариф</span>
-                  <p>{userData?.plan === "vip" ? "⭐ VIP" : "👤 FREE"}</p>
-                </div>
-              </div>
-
-              <div className={scss.info}>
-                <FaCar />
-                <div>
-                  <span>Мест использовано</span>
-                  <p>
-                    {userAdsCount} / {maxLimit}
-                  </p>
-                </div>
-              </div>
-            </div>
-
-            <div className={scss.rules}>
+            <section className={scss.rules}>
               <h2>Правила</h2>
               <ul>
                 <li>✔ Максимум 3 фотографии.</li>
@@ -409,7 +394,7 @@ const Create = () => {
                 <li>✔ Запрещено мошенничество.</li>
                 <li>✔ Нарушение правил карается мгновенным скрытием авто.</li>
               </ul>
-            </div>
+            </section>
 
             <button type="submit" disabled={loading}>
               {loading ? "Загрузка..." : "Опубликовать автомобиль"}
@@ -417,7 +402,7 @@ const Create = () => {
           </div>
         </form>
       </div>
-    </section>
+    </main>
   );
 };
 

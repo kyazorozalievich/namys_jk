@@ -273,7 +273,6 @@ const NumberMaster = () => {
 
   const isNamedKg = country === "KG" && kgType === "named";
 
-  // Динамический расчет цены с учетом скидок для 7-значных именных номеров
   const calculateDynamicPrice = () => {
     const currentConfig =
       country === "KG"
@@ -286,20 +285,17 @@ const NumberMaster = () => {
     if (isNamedKg) {
       const is7Chars = namedText.length === 7;
 
-      // Если ровно 7 букв — применяем скидку на базовую стоимость
       if (is7Chars && currentConfig.BASE_PRICE_DISCOUNT_7 !== undefined) {
         basePrice = currentConfig.BASE_PRICE_DISCOUNT_7;
       }
 
       for (let char of namedText) {
         if (is7Chars) {
-          // Цены со скидкой для 7 букв
           totalSymbolPrice +=
             currentConfig.LETTERS_DISCOUNT_7?.[char] !== undefined
               ? currentConfig.LETTERS_DISCOUNT_7[char]
               : currentConfig.DEFAULT_LETTER_PRICE_DISCOUNT_7;
         } else {
-          // Обычные цены для именного номера
           totalSymbolPrice +=
             currentConfig.LETTERS[char] !== undefined
               ? currentConfig.LETTERS[char]
@@ -307,7 +303,6 @@ const NumberMaster = () => {
         }
       }
     } else {
-      // Логика для обычных и старых номеров
       for (let char of letters) {
         totalSymbolPrice +=
           currentConfig.LETTERS[char] !== undefined
@@ -366,7 +361,6 @@ const NumberMaster = () => {
     "9",
   ]);
 
-  // Функции рендеринга шрифтов (оставляем без изменений)
   const renderKzLetters = (text = "AAA", customSize) => {
     return text.split("").map((char, index) => (
       <span
@@ -470,7 +464,6 @@ const NumberMaster = () => {
           toast.error("⚠️ Введите текст для именного номера!");
           return;
         }
-        // Изменено условие: минимальная длина теперь 3 буквы вместо 2
         if (namedText.length < 3) {
           toast.error("⚠️ Именной номер должен быть не короче 3 символов!");
           return;
@@ -614,7 +607,6 @@ const NumberMaster = () => {
       });
     }
   };
-
   return (
     <div className={scss.platePage}>
       <div className={scss.container}>
@@ -623,10 +615,9 @@ const NumberMaster = () => {
           Создай свой уникальный номер за пару кликов
         </p>
 
-        {/* 1. Выбор страны */}
         <div className={scss.section}>
-          <label>Выбери страну номера:</label>
-          <div className={scss.tabs}>
+          <label htmlFor="country-selector">Выбери страну номера:</label>
+          <div id="country-selector" className={scss.tabs}>
             <button
               className={country === "KG" ? scss.active : ""}
               onClick={() => {
@@ -666,11 +657,12 @@ const NumberMaster = () => {
           </div>
         </div>
 
-        {/* 2. Подкатегории для Кыргызстана */}
         {country === "KG" && (
           <div className={scss.section}>
-            <label>Тип государственного номера:</label>
-            <div className={scss.subTabs}>
+            <label htmlFor="kg-type-selector">
+              Тип государственного номера:
+            </label>
+            <div id="kg-type-selector" className={scss.subTabs}>
               <button
                 className={kgType === "classic" ? scss.activeSub : ""}
                 onClick={() => {
@@ -686,7 +678,7 @@ const NumberMaster = () => {
                 onClick={() => {
                   setKgType("named");
                   setNamedText("");
-                  setPlateSize("classic"); // Принудительно сбрасываем на широкий формат
+                  setPlateSize("classic");
                 }}
               >
                 Именной
@@ -705,19 +697,18 @@ const NumberMaster = () => {
           </div>
         )}
 
-        {/* 3. Инпуты ввода комбинаций */}
         <div className={scss.inputsForm}>
           <h3>Настройка комбинации</h3>
 
-          {/* ОБЫЧНЫЙ КГ / КАЗАХСТАН / РОССИЯ */}
           {((country === "KG" && kgType === "classic") ||
             country === "KZ" ||
             country === "RU") && (
             <div className={scss.inputsGrid}>
               <div className={scss.inputBox}>
-                <label>Регион (Не влияет на цену)</label>
+                <label htmlFor="region-input">Регион (Не влияет на цену)</label>
                 {country === "KG" ? (
                   <select
+                    id="region-input"
                     value={region}
                     onChange={(e) => setRegion(e.target.value)}
                   >
@@ -740,6 +731,7 @@ const NumberMaster = () => {
                   </select>
                 ) : (
                   <input
+                    id="region-input"
                     type="text"
                     placeholder={country === "KZ" ? "01" : "000"}
                     value={region}
@@ -755,8 +747,9 @@ const NumberMaster = () => {
               </div>
 
               <div className={scss.inputBox}>
-                <label>Цифры (макс. 3)</label>
+                <label htmlFor="digits-input">Цифры (макс. 3)</label>
                 <input
+                  id="digits-input"
                   type="text"
                   placeholder="000"
                   value={digits}
@@ -765,8 +758,9 @@ const NumberMaster = () => {
               </div>
 
               <div className={scss.inputBox}>
-                <label>Буквы (ENG, макс. 3)</label>
+                <label htmlFor="letters-input">Буквы (ENG, макс. 3)</label>
                 <input
+                  id="letters-input"
                   type="text"
                   placeholder="AAA"
                   value={letters}
@@ -776,15 +770,15 @@ const NumberMaster = () => {
             </div>
           )}
 
-          {/* ИМЕННОЙ КГ */}
           {isNamedKg && (
             <div
               className={scss.inputsGrid}
               style={{ gridTemplateColumns: "1fr 2fr" }}
             >
               <div className={scss.inputBox}>
-                <label>Регион</label>
+                <label htmlFor="named-region-select">Регион</label>
                 <select
+                  id="named-region-select"
                   value={region}
                   onChange={(e) => setRegion(e.target.value)}
                 >
@@ -807,8 +801,11 @@ const NumberMaster = () => {
                 </select>
               </div>
               <div className={scss.inputBox}>
-                <label>Текст номера (Только ENG буквы, макс. 7)</label>
+                <label htmlFor="named-text-input">
+                  Текст номера (Только ENG буквы, макс. 7)
+                </label>
                 <input
+                  id="named-text-input"
                   type="text"
                   placeholder="NAME"
                   value={namedText}
@@ -818,15 +815,15 @@ const NumberMaster = () => {
             </div>
           )}
 
-          {/* СТАРЫЙ КГ */}
           {country === "KG" && kgType === "old" && (
             <div
               className={scss.inputsGrid}
               style={{ gridTemplateColumns: "1fr 1fr 1fr" }}
             >
               <div className={scss.inputBox}>
-                <label>Стиль старого номера</label>
+                <label htmlFor="old-style-select">Стиль старого номера</label>
                 <select
+                  id="old-style-select"
                   value={oldStyle}
                   onChange={(e) => {
                     setOldStyle(e.target.value);
@@ -839,8 +836,9 @@ const NumberMaster = () => {
                 </select>
               </div>
               <div className={scss.inputBox}>
-                <label>Цифры (макс. 4)</label>
+                <label htmlFor="old-digits-input">Цифры (макс. 4)</label>
                 <input
+                  id="old-digits-input"
                   type="text"
                   placeholder="1234"
                   value={digits}
@@ -848,8 +846,9 @@ const NumberMaster = () => {
                 />
               </div>
               <div className={scss.inputBox}>
-                <label>Буквы (ENG)</label>
+                <label htmlFor="old-letters-input">Буквы (ENG)</label>
                 <input
+                  id="old-letters-input"
                   type="text"
                   placeholder={oldStyle === "style1" ? "AAB" : "AB"}
                   value={letters}
@@ -862,7 +861,6 @@ const NumberMaster = () => {
           )}
         </div>
 
-        {/* 4. Визуальное превью номера и КНОПКИ РАЗМЕРА */}
         <div className={scss.previewSection}>
           <div className={scss.previewHeader}>
             <h3>Превью номера:</h3>
@@ -875,7 +873,7 @@ const NumberMaster = () => {
               </button>
               <button
                 className={plateSize === "square" ? scss.activeSize : ""}
-                disabled={country === "KG" && kgType === "named"} // Отключаем для именного KG
+                disabled={country === "KG" && kgType === "named"}
                 onClick={() => setPlateSize("square")}
                 title={
                   country === "KG" && kgType === "named"
@@ -889,17 +887,14 @@ const NumberMaster = () => {
           </div>
 
           <div className={scss.plateBody}>
-            {/* ========================================= */}
-            {/* КЫРГЫЗСТАН ОБЫЧНЫЙ */}
             {country === "KG" &&
               kgType === "classic" &&
               (plateSize === "classic" ? (
-                /* ШИРОКИЙ KG */
                 <div className={scss.kgPlate}>
                   <div className={scss.leftSide}>
                     <span className={scss.regNum}>{region || "01"}</span>
                     <div className={scss.flag}>
-                      <img src={kgflag} alt="" />
+                      <img src={kgflag} alt="Флаг Кыргызстана" />
                       <span>KG</span>
                     </div>
                   </div>
@@ -909,12 +904,11 @@ const NumberMaster = () => {
                   </div>
                 </div>
               ) : (
-                /* КВАДРАТНЫЙ KG */
                 <div className={scss.kgPlateSquare}>
                   <div className={scss.squareTop}>
                     <span className={scss.regNum}>{region || "01"}</span>
                     <div className={scss.flag}>
-                      <img src={kgflag} alt="" />
+                      <img src={kgflag} alt="Флаг Кыргызстана" />
                       <span>KG</span>
                     </div>
                   </div>
@@ -925,14 +919,12 @@ const NumberMaster = () => {
                 </div>
               ))}
 
-            {/* ========================================= */}
-            {/* КЫРГЫЗСТАН ИМЕННОЙ (ТОЛЬКО ШИРОКИЙ) */}
             {country === "KG" && kgType === "named" && (
               <div className={scss.kgPlate}>
                 <div className={scss.leftSide}>
                   <span className={scss.regNum}>{region || "01"}</span>
                   <div className={scss.flag}>
-                    <img src={kgflag} alt="" />
+                    <img src={kgflag} alt="Флаг Кыргызстана" />
                     <span>KG</span>
                   </div>
                 </div>
@@ -942,15 +934,12 @@ const NumberMaster = () => {
               </div>
             )}
 
-            {/* ========================================= */}
-            {/* КЫРГЫЗСТАН СТАРЫЙ */}
             {country === "KG" &&
               kgType === "old" &&
               (plateSize === "classic" ? (
-                /* ШИРОКИЙ OLD KG */
                 <div className={scss.oldPlate}>
                   <div className={scss.leftSideOld}>
-                    <img src={oldflag} alt="" />
+                    <img src={oldflag} alt="Старый флаг Кыргызстана" />
                   </div>
                   <div className={scss.plateTextOld}>
                     {oldStyle === "style1" ? (
@@ -967,14 +956,12 @@ const NumberMaster = () => {
                   </div>
                 </div>
               ) : (
-                /* КВАДРАТНЫЙ OLD KG */
                 <div className={scss.oldPlateSquare}>
                   <span className={scss.squareOldDigits}>
                     {digits || "1234"}
                   </span>
-
                   <div className={scss.bottomSideOld}>
-                    <img src={kgflag} alt="" />
+                    <img src={kgflag} alt="Флаг Кыргызстана" />
                     <span className={scss.squareOldLetters}>
                       {letters || "ABC"}
                     </span>
@@ -982,14 +969,11 @@ const NumberMaster = () => {
                 </div>
               ))}
 
-            {/* ========================================= */}
-            {/* КАЗАХСТАН */}
             {country === "KZ" &&
               (plateSize === "classic" ? (
-                /* ШИРОКИЙ KZ */
                 <div className={scss.kzPlate}>
                   <div className={scss.leftSide}>
-                    <img src={kzflag} alt="" />
+                    <img src={kzflag} alt="Флаг Казахстана" />
                     <span>KZ</span>
                   </div>
                   <div className={scss.centerSide}>
@@ -1003,11 +987,10 @@ const NumberMaster = () => {
                   </div>
                 </div>
               ) : (
-                /* КВАДРАТНЫЙ KZ */
                 <div className={scss.kzPlateSquare}>
                   <div className={scss.kzSquareLeft}>
                     <div className={scss.flagBox}>
-                      <img src={kzflag} alt="" />
+                      <img src={kzflag} alt="Флаг Казахстана" />
                       <span>KZ</span>
                     </div>
                     <div className={scss.regionBox}>
@@ -1025,18 +1008,14 @@ const NumberMaster = () => {
                 </div>
               ))}
 
-            {/* ========================================= */}
-            {/* РОССИЯ */}
             {country === "RU" &&
               (plateSize === "classic" ? (
-                /* ШИРОКИЙ RU */
                 <div className={scss.ruPlate}>
                   <span className={scss.mainText}>
                     <span>{renderRuLetters(letters.slice(0, 1) || "A")}</span>
                     <span>{renderRuLetters(digits || "000")}</span>
                     <span>{renderRuLetters(letters.slice(1) || "AA")}</span>
                   </span>
-
                   <div className={scss.rightSideRu}>
                     <span
                       className={
@@ -1047,12 +1026,11 @@ const NumberMaster = () => {
                     </span>
                     <div className={scss.ruFlagBlock}>
                       <span>RUS</span>
-                      <img src={ruflag} alt="" />
+                      <img src={ruflag} alt="Флаг России" />
                     </div>
                   </div>
                 </div>
               ) : (
-                /* КВАДРАТНЫЙ RU */
                 <div className={scss.ruPlateSquare}>
                   <div className={scss.ruSquareTop}>
                     <span className={scss.ruStr}>
@@ -1078,7 +1056,7 @@ const NumberMaster = () => {
                       </span>
                       <div className={scss.ruFlagBlock}>
                         <span>RUS</span>
-                        <img src={ruflag} alt="" />
+                        <img src={ruflag} alt="Флаг России" />
                       </div>
                     </div>
                   </div>
@@ -1087,7 +1065,6 @@ const NumberMaster = () => {
           </div>
         </div>
 
-        {/* 5. Динамическая цена и кнопка заказа */}
         <div className={scss.priceBlock}>
           <div className={scss.priceInfo}>
             <span>Итоговая цена услуги:</span>
@@ -1102,7 +1079,6 @@ const NumberMaster = () => {
         </div>
       </div>
 
-      {/* Модальное окно */}
       {showModal && (
         <div className={scss.modalOverlay}>
           <div className={scss.modalContent}>
@@ -1139,12 +1115,13 @@ const NumberMaster = () => {
                 </button>
               </div>
               <div className={scss.modalInputBox}>
-                <label>
+                <label htmlFor="modal-contact-input">
                   {contactMethod === "telegram"
                     ? "Ваш Telegram Username (например: @username)"
                     : "Номер телефона WhatsApp (с кодом страны)"}
                 </label>
                 <input
+                  id="modal-contact-input"
                   type="text"
                   required
                   placeholder={

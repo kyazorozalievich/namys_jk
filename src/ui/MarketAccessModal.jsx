@@ -5,55 +5,66 @@ const MarketAccessModal = ({ open, onClose }) => {
   if (!open) return null;
 
   return (
-    <div className={scss.overlay} onClick={onClose}>
+    <div
+      className={scss.overlay}
+      onClick={onClose}
+      aria-modal="true"
+      role="dialog"
+    >
       <div className={scss.modal} onClick={(e) => e.stopPropagation()}>
-        <button className={scss.close} onClick={onClose}>
-          ✕
+        <button
+          className={scss.close}
+          onClick={onClose}
+          aria-label="Закрыть модальное окно"
+        >
+          <span aria-hidden="true">×</span>
         </button>
 
-        <h1>
-          Авторынок
-          <span> Namys JK</span>
-        </h1>
+        <header>
+          <h1>
+            Авторынок <span>Namys JK</span>
+          </h1>
+          <p className={scss.description}>
+            Для публикации автомобилей необходимо получить доступ к авторынку.
+          </p>
+        </header>
 
-        <p className={scss.description}>
-          Для публикации автомобилей необходимо получить доступ к авторынку.
-        </p>
-
-        <div className={scss.line}></div>
+        <hr className={scss.line} />
 
         <div className={scss.tarif}>
-          <div className={scss.block}>
+          <section className={scss.block}>
             <h3>🔑 Обычный доступ</h3>
-
             <ul>
-              <li>✔ До 10 активных объявлений</li>
+              <li>✔ До 10 active объявлений</li>
               <li>✔ Размещение автомобилей</li>
               <li>✔ Просмотр покупателей</li>
               <li>✔ Поддержка администрации</li>
             </ul>
-          </div>
+          </section>
 
-          <div className={scss.vip}>
+          <section className={scss.vip}>
             <div className={scss.vipTitle}>⭐ VIP доступ</div>
-
             <ul>
               <li>✔ До 20 объявлений</li>
               <li>✔ VIP карточка автомобиля</li>
               <li>✔ Золотая рамка</li>
               <li>✔ Выше обычных объявлений</li>
             </ul>
-          </div>
+          </section>
         </div>
 
         <button
           className={scss.adminBtn}
-          onClick={() => window.open("https://t.me/kka_07")}
+          onClick={() =>
+            window.open("https://t.me/kka_07", "_blank", "noopener,noreferrer")
+          }
         >
           💬 Получить доступ у администратора
         </button>
 
-        <small>Доступ выдается администрацией Namys JK</small>
+        <small className={scss.footerText}>
+          Доступ выдается администрацией Namys JK
+        </small>
       </div>
     </div>
   );

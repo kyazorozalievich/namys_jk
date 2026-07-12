@@ -1,13 +1,11 @@
 import React, { useContext } from "react";
 import scss from "./ProfileMenu.module.scss";
 import { useUserProfile } from "./useUserProfile";
-import { useNavigate } from "react-router-dom";
 import { ModalContext } from "../../../ui/ModalContext";
 
 const ProfileMenu = () => {
   const { profile, loading } = useUserProfile();
   const { checkMarketAccess } = useContext(ModalContext);
-  const navigate = useNavigate();
 
   if (loading) {
     return <h2 className={scss.errorAuth}>Загрузка...</h2>;
@@ -17,20 +15,22 @@ const ProfileMenu = () => {
     return <h2 className={scss.errorAuth}>Профиль не найден</h2>;
   }
 
-  // Настройка лимитов на основе общего поля plan
   const adsLimit = profile.plan === "vip" ? 20 : 10;
   const adsUsed = profile.adsUsed || 0;
+  const freeSlots = Math.max(adsLimit - adsUsed, 0);
 
   return (
-    <section className={scss.profilePage}>
+    <main className={scss.profilePage}>
       <div className="container">
-        <div className={scss.card}>
-          <div className={scss.top}>
-            <img src={profile.photo} alt={profile.name} />
-
+        <article className={scss.card}>
+          <header className={scss.top}>
+            <img
+              src={profile.photo}
+              alt={`Профиль пользователя ${profile.name}`}
+              loading="lazy"
+            />
             <div className={scss.userInfo}>
               <h1>{profile.name}</h1>
-
               <span
                 className={
                   profile.plan === "vip" ? scss.vipBadge : scss.freeBadge
@@ -41,14 +41,13 @@ const ProfileMenu = () => {
                   : "👤 Обычный пользователь"}
               </span>
             </div>
-          </div>
+          </header>
 
-          <div className={scss.stats}>
+          <section className={scss.stats} aria-label="Статистика аккаунта">
             <div className={scss.item}>
               <span>Роль</span>
               <h3>{profile.role || "member"}</h3>
             </div>
-
             <div className={scss.item}>
               <span>Доступ к рынку</span>
               <h3>
@@ -59,40 +58,41 @@ const ProfileMenu = () => {
                     : "❌ Нет доступа"}
               </h3>
             </div>
-
             <div className={scss.item}>
               <span>Тариф</span>
               <h3>{profile.plan === "vip" ? "VIP" : "Free"}</h3>
             </div>
-
             <div className={scss.item}>
               <span>Объявления</span>
               <h3>
                 {adsUsed}/{adsLimit}
               </h3>
             </div>
-          </div>
+          </section>
 
-          <div className={scss.progress}>
+          <div
+            className={scss.progress}
+            role="progressbar"
+            aria-valuenow={adsUsed}
+            aria-valuemin="0"
+            aria-valuemax={adsLimit}
+          >
             <div
-              style={{
-                width: `${Math.min((adsUsed / adsLimit) * 100, 100)}%`,
-              }}
+              style={{ width: `${Math.min((adsUsed / adsLimit) * 100, 100)}%` }}
             ></div>
           </div>
 
           <p className={scss.bottomText}>
-            Свободно мест: <b>{Math.max(adsLimit - adsUsed, 0)}</b>
+            Свободно мест: <b>{freeSlots}</b>
           </p>
 
           <div className={scss.actions}>
             <button
               className={scss.myAds}
-              onClick={() => navigate("/profile/userCars")}
+              onClick={() => (window.location.href = "/profile/userCars")}
             >
               🚗 Мои объявления
             </button>
-
             <button
               className={scss.addCar}
               onClick={() => checkMarketAccess(profile)}
@@ -101,22 +101,19 @@ const ProfileMenu = () => {
             </button>
           </div>
 
-          <div className={scss.marketInfo}>
+          <aside className={scss.marketInfo}>
             <h2>Авторынок Namys JK</h2>
-
             {profile.marketStatus === "active" ? (
               <>
                 <p>✅ У вас есть доступ к публикации автомобилей.</p>
                 <p>
-                  Вы можете разместить еще{" "}
-                  <b>{Math.max(adsLimit - adsUsed, 0)}</b> объявлений.
+                  Вы можете разместить еще <b>{freeSlots}</b> объявлений.
                 </p>
               </>
             ) : (
               <>
                 <p>🔒 Доступ к публикации автомобилей отсутствует.</p>
                 <p>Для получения доступа обратитесь к администрации клана.</p>
-
                 <button
                   className={scss.telegram}
                   onClick={() => window.open("https://t.me/kka_07")}
@@ -125,10 +122,10 @@ const ProfileMenu = () => {
                 </button>
               </>
             )}
-          </div>
-        </div>
+          </aside>
+        </article>
       </div>
-    </section>
+    </main>
   );
 };
 

@@ -3,10 +3,9 @@ import { db } from "../../../../firebase/FireBase";
 import { doc, onSnapshot } from "firebase/firestore";
 import scss from "./GGMaster.module.scss";
 
-// ТОКЕНЫ ДЛЯ ТЕЛЕГРАМ-БОТА (Замени на свои реальные данные)
 const TG_BOT_TOKEN = "8735673140:AAHT5xSLgnazXY56Q_miz-_XWilPnOL2ydQ";
-const TG_CHAT_ID = "-1004264787911"; // Например, -100xxxxxxxxx
-const TG_GROUP_LINK = "https://t.me/gg_namysjk"; // Ссылка на твою ТГ группу
+const TG_CHAT_ID = "-1004264787911";
+const TG_GROUP_LINK = "https://t.me/gg_namysjk";
 
 const INITIAL_GG_SERVICES = {
   coin_car: {
@@ -49,10 +48,9 @@ const GGMaster = () => {
     return () => unsubscribe();
   }, []);
 
-  // Функция отправки уведомления в Телеграм и перехода по ссылке
   const handleTelegramRedirect = async () => {
     setIsSending(true);
-    const message = `🔔 **Новый клиент!**\nКто-то нажал кнопку "Связаться с GG мастерами" на сайте и переходит в группу за услугами. Будьте готовы!`;
+    const message = `🔔 **Новый клиент!**\nКто-то нажал кнопку "Связаться с GG мастерами" на сайте и переходит в группу за услугами.**\nБудьте готовы!**\nМастера: @opium_sky / @KAKE_DDS`;
 
     try {
       await fetch(`https://api.telegram.org/bot${TG_BOT_TOKEN}/sendMessage`, {
@@ -69,13 +67,16 @@ const GGMaster = () => {
     } finally {
       setIsSending(false);
       setIsModalOpen(false);
-      // Перенаправляем пользователя в группу
       window.open(TG_GROUP_LINK, "_blank", "noreferrer");
     }
   };
 
   if (loading)
-    return <div className={scss.loader}>Загрузка конфигурации GG...</div>;
+    return (
+      <div className={scss.loader} role="status">
+        Загрузка конфигурации GG...
+      </div>
+    );
 
   const activeCars = Object.values(ggList).filter(
     (item) => item.active && item.cat === "cars",
@@ -85,66 +86,67 @@ const GGMaster = () => {
   );
 
   return (
-    <div className={scss.profilePage}>
+    <main className={scss.profilePage}>
       <div className={scss.mainCard}>
-        {/* Шапка */}
-        <div className={scss.headerSection}>
+        <header className={scss.headerSection}>
           <h1 className={scss.mainTitle}>🛠️ Всем известные GG услуги</h1>
           <p className={scss.description}>
             Актуальный прайс-лист на кастомизацию, тюнинг и прокачку авто от
             наших мастеров.
           </p>
-        </div>
+        </header>
 
-        {/* СЕКЦИЯ 1: ЦЕНЫ НА АВТО */}
         {activeCars.length > 0 && (
-          <div className={scss.sectionBlock}>
+          <section className={scss.sectionBlock}>
             <h2 className={scss.blockTitle}>💰 Цены на автомобили</h2>
             <div className={scss.grid}>
               {activeCars.map((item, idx) => (
-                <div key={idx} className={scss.item}>
-                  <h3>{item.title}</h3>
-                  <div className={scss.priceRow}>
-                    <span className={scss.rub}>{item.priceRub} Сом</span>
-                    <span className={scss.stars}>{item.priceStars} ★ TG</span>
-                  </div>
-                </div>
-              ))}
-            </div>
-          </div>
-        )}
-
-        {/* СЕКЦИЯ 2: ЦЕНЫ НА ТЮНИНГ */}
-        {activeTuning.length > 0 && (
-          <div className={scss.sectionBlock}>
-            <h2 className={scss.blockTitle}>🚀 Характеристики & Улучшения</h2>
-            <div className={scss.grid}>
-              {activeTuning.map((item, idx) => (
-                <div key={idx} className={scss.item}>
+                <article key={idx} className={scss.item}>
                   <h3>{item.title}</h3>
                   <div className={scss.priceRow}>
                     <span className={scss.som}>{item.priceRub} Сом</span>
                     <span className={scss.stars}>{item.priceStars} ★ TG</span>
                   </div>
-                </div>
+                </article>
               ))}
             </div>
-          </div>
+          </section>
         )}
 
-        {/* ОБЩАЯ КНОПКА СВЯЗИ СНИЗУ */}
+        {activeTuning.length > 0 && (
+          <section className={scss.sectionBlock}>
+            <h2 className={scss.blockTitle}>🚀 Характеристики & Улучшения</h2>
+            <div className={scss.grid}>
+              {activeTuning.map((item, idx) => (
+                <article key={idx} className={scss.item}>
+                  <h3>{item.title}</h3>
+                  <div className={scss.priceRow}>
+                    <span className={scss.som}>{item.priceRub} Сом</span>
+                    <span className={scss.stars}>{item.priceStars} ★ TG</span>
+                  </div>
+                </article>
+              ))}
+            </div>
+          </section>
+        )}
+
         <div className={scss.actionContainer}>
-          <button className={scss.addCar} onClick={() => setIsModalOpen(true)}>
+          <button
+            className={scss.addCar}
+            onClick={() => setIsModalOpen(true)}
+            aria-label="Связаться с GG мастерами в Telegram"
+          >
             💬 Связаться с GG мастерами
           </button>
         </div>
       </div>
 
-      {/* МОДАЛЬНОЕ ОКНО */}
       {isModalOpen && (
         <div
           className={scss.modalOverlay}
           onClick={() => setIsModalOpen(false)}
+          role="dialog"
+          aria-modal="true"
         >
           <div
             className={scss.modalContent}
@@ -167,6 +169,7 @@ const GGMaster = () => {
                 className={scss.telegramBtn}
                 onClick={handleTelegramRedirect}
                 disabled={isSending}
+                aria-label="Подтвердить переход в Телеграм группу"
               >
                 {isSending ? "Запуск..." : "Перейти в группу"}
               </button>
@@ -174,7 +177,7 @@ const GGMaster = () => {
           </div>
         </div>
       )}
-    </div>
+    </main>
   );
 };
 

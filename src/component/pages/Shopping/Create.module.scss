@@ -1,8 +1,9 @@
 .create {
   width: 100%;
-  padding: 120px 0 80px; /* Сделали отступ сверху больше, как в .profilePage */
-  background: #f7f7f7; /* Мягкий светлый фон вместо черного */
+  padding: 120px 0 80px;
+  background: #f7f7f7;
   min-height: 100vh;
+  box-sizing: border-box;
 }
 
 .title {
@@ -12,19 +13,20 @@
     display: flex;
     align-items: center;
     gap: 12px;
-    color: #111; /* Темный текст вместо белого */
+    color: #111;
     font-size: 38px;
     font-weight: 700;
     margin-bottom: 12px;
 
     svg {
-      color: #d1a959; /* Благородное золото */
+      color: #d1a959;
     }
   }
 
   p {
-    color: #777; /* Мягкий серый цвет для описания */
+    color: #777;
     font-size: 16px;
+    margin: 0;
   }
 }
 
@@ -42,16 +44,26 @@
   gap: 25px;
 }
 
-/* Карточки стали белыми, с мягкой тенью и без агрессивных рамок */
+.profileMobile {
+  display: none;
+}
+
+.profileDesktop {
+  display: block;
+}
+
 .card,
 .profile,
 .rules {
   background: white;
   border: 1px solid #ececec;
-  border-radius: 20px; /* Округление 20px, как во втором коде */
-  padding: 35px; /* Сделали внутренние отступы просторнее */
+  border-radius: 20px;
+  padding: 35px;
   box-shadow: 0 15px 40px rgba(0, 0, 0, 0.06);
-  transition: 0.3s; /* Перенес транзишн сюда для чистоты */
+  transition:
+    border-color 0.3s,
+    transform 0.3s,
+    box-shadow 0.3s;
 
   &:hover {
     border-color: #d1a959;
@@ -60,18 +72,18 @@
   }
 }
 
-.card h2,
+.card h3,
 .profile h2,
 .rules h2 {
   display: flex;
   align-items: center;
   gap: 10px;
-  color: #111; /* Темный заголовок */
+  color: #111;
   font-size: 23px;
-  margin-bottom: 25px;
+  margin: 0 0 25px 0;
 
   svg {
-    color: #d1a959; /* Золотой акцент */
+    color: #d1a959;
   }
 }
 
@@ -80,16 +92,16 @@
   gap: 18px;
 }
 
-/* Зона загрузки фото стала аккуратной и светлой */
 .photo {
   flex: 1;
   height: 210px;
   border: 2px dashed #ececec;
   border-radius: 15px;
   cursor: pointer;
-  transition: 0.3s;
+  transition:
+    border-color 0.3s,
+    background-color 0.3s;
   background: #fafafa;
-
   display: flex;
   flex-direction: column;
   justify-content: center;
@@ -108,8 +120,8 @@
   }
 
   p {
-    margin-top: 15px;
-    color: #555; /* Темный текст вместо белого */
+    margin: 15px 0 0 0;
+    color: #555;
     font-size: 15px;
   }
 }
@@ -126,7 +138,7 @@
   gap: 8px;
 
   label {
-    color: #333; /* Более читаемый темный лейбл */
+    color: #333;
     font-size: 15px;
     font-weight: 600;
   }
@@ -137,12 +149,16 @@
     height: 52px;
     border-radius: 12px;
     border: 1px solid #ececec;
-    background: #fafafa; /* Светлая подложка для инпутов, как .item во втором коде */
-    color: #111; /* Черный текст при вводе */
+    background: #fafafa;
+    color: #111;
     padding: 0 15px;
     outline: none;
-    transition: 0.25s;
+    transition:
+      border-color 0.25s,
+      background-color 0.25s,
+      box-shadow 0.25s;
     font-size: 15px;
+    box-sizing: border-box;
 
     &:focus {
       border-color: #d1a959;
@@ -154,6 +170,10 @@
   select {
     cursor: pointer;
   }
+}
+
+.fullWidth {
+  grid-column: span 2;
 }
 
 .description {
@@ -185,8 +205,12 @@
     color: #111;
     padding: 15px;
     outline: none;
-    transition: 0.25s;
+    transition:
+      border-color 0.25s,
+      background-color 0.25s,
+      box-shadow 0.25s;
     font-size: 15px;
+    box-sizing: border-box;
 
     &:focus {
       border-color: #d1a959;
@@ -200,7 +224,6 @@
   }
 }
 
-/* Блок информации в профиле (светлые разделители) */
 .info {
   display: flex;
   align-items: center;
@@ -217,13 +240,14 @@
     min-width: 46px;
     padding: 10px;
     border-radius: 12px;
-    background: rgba(209, 169, 89, 0.1); /* Нежно-золотой фон под иконку */
+    background: rgba(209, 169, 89, 0.1);
     color: #d1a959;
+    box-sizing: border-box;
   }
 
   span {
     display: block;
-    color: gray; /* Как во втором коде */
+    color: gray;
     font-size: 13px;
     margin-bottom: 4px;
   }
@@ -232,6 +256,7 @@
     color: #111;
     font-size: 16px;
     font-weight: 600;
+    margin: 0;
   }
 }
 
@@ -241,43 +266,48 @@
     flex-direction: column;
     gap: 15px;
     padding-left: 18px;
+    margin: 0;
   }
 
   li {
-    color: #555; /* Мягкий темный цвет для текста правил */
+    color: #555;
     line-height: 1.6;
     font-size: 15px;
   }
 }
 
-/* Главная кнопка действия (стиль .addCar) */
 .right {
   button {
     width: 100%;
     height: 58px;
     border: none;
     border-radius: 14px;
-    background: #d1a959; /* Золото из второго примера */
-    color: white; /* Белый текст вместо черного */
+    background: #d1a959;
+    color: white;
     font-size: 17px;
     font-weight: 700;
     cursor: pointer;
-    transition: 0.3s;
+    transition:
+      background-color 0.3s,
+      transform 0.3s,
+      box-shadow 0.3s;
     box-shadow: 0 8px 25px rgba(209, 169, 89, 0.25);
 
     &:hover {
-      background: #b68a3d; /* При ховере темнеет, как .addCar */
+      background: #b68a3d;
       transform: translateY(-3px);
       box-shadow: 0 12px 30px rgba(182, 138, 61, 0.35);
     }
 
-    &:active {
-      transform: scale(0.98);
+    &:disabled {
+      background: #ccc;
+      cursor: not-allowed;
+      transform: none;
+      box-shadow: none;
     }
   }
 }
 
-/* Скроллбар в едином стиле */
 textarea::-webkit-scrollbar {
   width: 8px;
 }
@@ -292,84 +322,111 @@ textarea::-webkit-scrollbar-track {
 }
 
 select option {
-  background: white; /* Выпадающий список теперь тоже белый */
+  background: white;
   color: #111;
 }
 
-/* Планшет */
-@media (max-width: 1000px) {
-  .content {
-    grid-template-columns: 1fr;
+@media (max-width: 1240px) {
+  .create {
+    padding: 100px 0 60px;
   }
-
-  .right {
-    order: -1;
+  .card,
+  .profile,
+  .rules {
+    padding: 30px;
   }
 }
 
-/* Телефон */
-@media (max-width: 700px) {
+@media (max-width: 1024px) {
+  .content {
+    grid-template-columns: 1fr;
+    gap: 25px;
+  }
+
+  .profileDesktop {
+    display: none;
+  }
+
+  .profileMobile {
+    display: block;
+  }
+
+  .photo {
+    height: 180px;
+  }
+}
+
+@media (max-width: 768px) {
   .title {
+    margin-bottom: 25px;
     h1 {
       font-size: 30px;
     }
-
     p {
-      font-size: 14px;
+      font-size: 15px;
     }
+  }
+
+  .photos {
+    flex-direction: column;
+    gap: 15px;
+  }
+
+  .photo {
+    width: 100%;
+    height: 200px;
   }
 
   .inputs {
     grid-template-columns: 1fr;
   }
 
-  .photos {
-    flex-direction: column;
-  }
-
-  .photo {
-    width: 100%;
-    height: 180px;
-  }
-
-  .card,
-  .profile,
-  .rules {
-    padding: 25px; /* Чуть больше отступов даже на мобилке для ощущения премиальности */
-  }
-
-  .card h2,
-  .profile h2,
-  .rules h2 {
-    font-size: 20px;
+  .fullWidth {
+    grid-column: span 1;
   }
 }
 
-@media (max-width: 500px) {
+@media (max-width: 480px) {
   .create {
-    padding: 40px 0 60px;
+    padding: 100px 0 40px;
   }
 
   .title {
     h1 {
       font-size: 24px;
     }
+    p {
+      font-size: 14px;
+    }
   }
 
-  .info {
-    svg {
-      width: 42px;
-      height: 42px;
-      min-width: 42px;
-    }
+  .card,
+  .profile,
+  .rules {
+    padding: 20px;
+    border-radius: 16px;
+  }
 
-    p {
-      font-size: 15px;
-    }
+  .card h3,
+  .profile h2,
+  .rules h2 {
+    font-size: 19px;
+    margin-bottom: 18px;
   }
 
   .right button {
-    height: 54px;
+    height: 52px;
     font-size: 16px;
+  }
+}
+
+@media (max-width: 320px) {
+  .title h1 {
+    font-size: 20px;
+  }
+  .card,
+  .profile,
+  .rules {
+    padding: 15px;
   }
 }

@@ -1,33 +1,138 @@
 .gallerySec {
   margin-block: 100px;
+
   .nav {
     display: flex;
-    align-items: center;
-    justify-content: center;
     flex-direction: column;
-    gap: 20px;
+    gap: 25px;
+
     h2 {
       display: flex;
       align-items: center;
       gap: 10px;
-      font-size: 25px;
+      font-size: 28px;
+      font-family: sans-serif;
+
       span {
-        font-size: 25px;
+        display: flex;
+        align-items: center;
         color: #b68a3d;
       }
     }
+
     .galleryImgs {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      flex-wrap: wrap;
+      display: grid;
+      grid-template-columns: repeat(5, 1fr); // 5 картинок в ряд на десктопе
       gap: 20px;
+      width: 100%;
+
       img {
-        width: 200px;
-        height: 100px;
+        width: 100%;
+        height: 140px;
         object-fit: cover;
-        border-radius: 5px;
-        box-shadow: 0px 0px 5px gray;
+        border-radius: 8px;
+        box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.15);
+        transition: transform 0.3s ease;
+
+        &:hover {
+          transform: translateY(-3px);
+        }
+      }
+    }
+  }
+}
+
+/* --- Медиазапросы для адаптации и плавного скролла --- */
+
+@media (max-width: 1240px) {
+  .gallerySec {
+    margin-block: 80px;
+
+    .nav {
+      .galleryImgs {
+        grid-template-columns: repeat(4, 1fr); // 4 картинки в ряд
+        gap: 15px;
+      }
+    }
+  }
+}
+
+// Переключаем галерею в режим горизонтального скролла для планшетов и телефонов
+@media (max-width: 1024px) {
+  .gallerySec {
+    .nav {
+      .galleryImgs {
+        display: flex;
+        justify-content: flex-start;
+        flex-wrap: nowrap;
+        overflow-x: auto;
+        scroll-behavior: smooth;
+        -webkit-overflow-scrolling: touch;
+        padding-bottom: 15px; // Место для красивого зазора снизу
+        padding-inline: 5px;
+
+        // Прячем стандартный некрасивый скроллбар в Webkit (Chrome, Safari)
+        &::-webkit-scrollbar {
+          display: none;
+        }
+        // Прячем скроллбар в Firefox и IE
+        -ms-overflow-style: none;
+        scrollbar-width: none;
+
+        img {
+          flex: 0 0 240px; // Задаем фиксированную ширину карточки в скролле
+          height: 130px;
+        }
+      }
+    }
+  }
+}
+
+@media (max-width: 768px) {
+  .gallerySec {
+    margin-block: 60px;
+
+    .nav {
+      h2 {
+        font-size: 24px;
+      }
+      .galleryImgs {
+        gap: 12px;
+        img {
+          flex: 0 0 200px;
+          height: 120px;
+        }
+      }
+    }
+  }
+}
+
+@media (max-width: 480px) {
+  .gallerySec {
+    margin-block: 40px;
+
+    .nav {
+      gap: 15px;
+      h2 {
+        font-size: 22px;
+      }
+      .galleryImgs {
+        img {
+          flex: 0 0 170px;
+          height: 100px;
+        }
+      }
+    }
+  }
+}
+
+@media (max-width: 320px) {
+  .gallerySec {
+    .nav {
+      .galleryImgs {
+        img {
+          flex: 0 0 150px;
+        }
       }
     }
   }

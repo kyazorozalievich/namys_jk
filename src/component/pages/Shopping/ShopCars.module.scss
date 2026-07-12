@@ -1,251 +1,336 @@
 .carsSec {
-  padding-block: 100px;
+  padding-block: clamp(100px, 8vw, 100px);
 
   .nav {
     display: flex;
     flex-direction: column;
     gap: 20px;
 
-    h2 {
-      font-size: 24px;
+    h1 {
+      font-size: clamp(20px, 4vw, 24px);
       display: flex;
+      align-items: center;
       gap: 8px;
+      margin: 0;
       span {
         color: #c89b45;
+        display: inline-flex;
       }
     }
 
     .mainBtns {
       display: flex;
+      flex-direction: row;
       align-items: center;
       justify-content: space-between;
+      gap: 15px;
       width: 100%;
       margin-block: 10px;
 
       .tables {
         display: flex;
-        gap: 20px;
+        gap: 12px;
+
+        @media (max-width: 576px) {
+          width: 100%;
+          select {
+            flex: 1;
+            width: auto !important;
+          }
+        }
 
         select {
-          width: 170px;
+          width: 150px;
           height: 38px;
           border-radius: 5px;
           border: 1px solid #c89b45;
           padding: 0 10px;
           outline: none;
           background: transparent;
-          color: inherit; 
+          color: inherit;
           cursor: pointer;
 
           option {
-            background: #1a1a1a; 
+            background: #1a1a1a;
             color: white;
           }
         }
       }
+    }
 
-      button {
-        width: 200px;
-        height: 40px;
-        border-radius: 5px;
-        border: none;
+    .carsScrollContainer {
+      width: 100%;
+      max-height: 75vh;
+      overflow-y: auto;
+      padding-right: 5px;
+
+      &::-webkit-scrollbar {
+        width: 6px;
+      }
+      &::-webkit-scrollbar-track {
+        background: transparent;
+      }
+      &::-webkit-scrollbar-thumb {
         background: #b68a3d;
-        color: white;
-        font-weight: 600;
-        cursor: pointer;
-        transition: 0.5s;
-        &:hover {
-          transform: scale(1.03);
-        }
+        border-radius: 10px;
       }
     }
 
     .carsCards {
       display: flex;
-      gap: 25px;
+      gap: 20px;
       flex-wrap: wrap;
-    }
-  }
+      justify-content: flex-start;
 
-  /* --- МОДАЛЬНОЕ ОКНО --- */
-  .modalBg {
-    position: fixed;
-    inset: 0;
-    background: rgba(0, 0, 0, 0.65); 
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    z-index: 99;
-    backdrop-filter: blur(4px); 
-  }
-
-  .modal {
-    width: 520px;
-    background: white;
-    border-radius: 15px;
-    padding: 25px;
-    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
-    display: flex;
-    align-items: center;
-    text-align: center;
-    flex-direction: column;
-    gap: 15px;
-    z-index: 100;
-    position: relative;
-    color: #111; 
-
-    .close {
-      position: absolute;
-      top: 15px;
-      right: 15px;
-      font-size: 24px;
-      cursor: pointer;
-      color: #777;
-      transition: 0.2s;
-      &:hover {
-        color: #000;
+      @media (max-width: 530px) {
+        gap: 10px;
       }
     }
 
-    .modalImg {
-      display: flex;
-      align-items: center;
-      gap: 15px;
-      position: relative;
-
-      img {
-        width: 380px;
-        height: 230px;
-        object-fit: cover;
-        border-radius: 12px;
-        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
-      }
-
-      button {
-        background: #b68a3d;
-        color: white;
-        border: none;
-        width: 35px;
-        height: 35px;
-        border-radius: 50%;
-        cursor: pointer;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        transition: 0.2s;
-        &:hover {
-          background: #c79a4d;
-          transform: scale(1.05);
-        }
-      }
-    }
-
-    h2 {
-      font-size: 22px;
-      margin: 0;
-      font-weight: 600;
-    }
-
-    p {
-      color: #555;
-      font-size: 13px;
-      line-height: 1.5;
-      max-width: 90%;
-    }
-
-    .detail {
-      width: 100%;
-      display: flex;
-      align-items: center;
-      justify-content: space-around;
-      border-top: 1px solid #eee;
-      border-bottom: 1px solid #eee;
-      padding-block: 10px;
-      margin-block: 5px;
-
-      h4 {
-        font-weight: 500;
-        font-size: 15px;
-        margin: 0;
-        span {
-          color: #b68a3d;
-          font-weight: 700;
-        }
-      }
-    }
-
-    .buy {
+    .publishBtn {
+      align-self: flex-start;
       margin-top: 10px;
-      width: 100%;
-      height: 42px;
-      background: #b68a3d;
+      width: 220px;
+      height: 44px;
+      border-radius: 6px;
       border: none;
-      border-radius: 8px;
+      background: #b68a3d;
       color: white;
       font-weight: 600;
+      cursor: pointer;
+      transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+
+      @media (max-width: 576px) {
+        width: 100%;
+        align-self: center;
+      }
+
+      &:hover {
+        transform: scale(1.03);
+      }
+    }
+  }
+
+  .statusText {
+    width: 100%;
+    text-align: center;
+    font-size: 15px;
+    color: #666;
+    padding-block: 40px;
+  }
+}
+
+
+.modalBg {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.7);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 99;
+  backdrop-filter: blur(4px);
+  padding: 15px;
+}
+
+.modal {
+  width: 100%;
+  max-width: 520px;
+  max-height: 90vh;
+  overflow-y: auto;
+  background: white;
+  border-radius: 15px;
+  padding: clamp(15px, 4vw, 25px);
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+  display: flex;
+  align-items: center;
+  text-align: center;
+  flex-direction: column;
+  gap: 15px;
+  z-index: 100;
+  position: relative;
+  color: #111;
+
+  &::-webkit-scrollbar {
+    width: 4px;
+  }
+  &::-webkit-scrollbar-thumb {
+    background: #ccc;
+    border-radius: 4px;
+  }
+
+  .close {
+    position: absolute;
+    top: 15px;
+    right: 15px;
+    font-size: 24px;
+    cursor: pointer;
+    color: #777;
+    background: none;
+    border: none;
+    display: inline-flex;
+    transition: color 0.2s;
+    z-index: 10;
+    &:hover {
+      color: #000;
+    }
+  }
+
+  .modalImg {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    position: relative;
+
+    img {
+      width: 100%;
+      max-width: 380px;
+      height: auto;
+      aspect-ratio: 380 / 230;
+      object-fit: cover;
+      border-radius: 12px;
+      box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+    }
+
+    button {
+      background: #b68a3d;
+      color: white;
+      border: none;
+      width: 35px;
+      height: 35px;
+      border-radius: 50%;
+      cursor: pointer;
       display: flex;
       align-items: center;
       justify-content: center;
-      cursor: pointer;
-      transition: 0.2s;
+      transition:
+        background 0.2s,
+        transform 0.2s;
+      position: absolute;
+      top: 50%;
+      transform: translateY(-50%);
+      z-index: 5;
+
+      &:first-of-type {
+        left: 5px;
+      }
+      &:last-of-type {
+        right: 5px;
+      }
+
       &:hover {
         background: #c79a4d;
+        transform: translateY(-50%) scale(1.05);
       }
     }
+  }
 
-    /* --- СТИЛИ КНОПОК СОЦ. СЕТЕЙ ДЛЯ СВЯЗИ --- */
-    .contactBtn {
-      margin-top: 10px;
-      width: 100%;
-      height: 44px;
-      border-radius: 8px;
-      color: white;
-      font-weight: 600;
-      text-decoration: none;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 10px;
-      font-size: 15px;
-      cursor: pointer;
-      transition: all 0.3s ease;
-      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  h2 {
+    font-size: clamp(18px, 4vw, 22px);
+    margin: 0;
+    font-weight: 600;
+  }
 
-      svg {
-        font-size: 20px;
+  p {
+    color: #555;
+    font-size: 13px;
+    line-height: 1.5;
+    max-width: 90%;
+    margin: 0;
+  }
+
+  .detail {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: space-around;
+    border-top: 1px solid #eee;
+    border-bottom: 1px solid #eee;
+    padding-block: 10px;
+
+    h4 {
+      font-weight: 500;
+      font-size: clamp(13px, 3.5vw, 15px);
+      margin: 0;
+      span {
+        color: #b68a3d;
+        font-weight: 700;
       }
+    }
+  }
 
-      &:hover {
-        transform: translateY(-2px);
-        box-shadow: 0 6px 20px rgba(0, 0, 0, 0.25);
-        filter: brightness(1.1);
-      }
+  .sellerInfo {
+    font-size: 13px;
+    color: #666;
+  }
 
-      /* Telegram Стили */
-      &.telegram {
-        background: #229ed9;
-      }
+  .buy {
+    width: 100%;
+    height: 42px;
+    background: #b68a3d;
+    border: none;
+    border-radius: 8px;
+    color: white;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: background 0.2s;
+    &:hover {
+      background: #c79a4d;
+    }
+  }
 
-      /* WhatsApp Стили */
-      &.whatsapp {
-        background: #25d366;
-      }
+  .contactBtn {
+    width: 100%;
+    height: 44px;
+    border-radius: 8px;
+    color: white;
+    font-weight: 600;
+    text-decoration: none;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    font-size: 15px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
 
-      /* Instagram Стили */
-      &.instagram {
-        background: linear-gradient(45deg, #f09433 0%, #e6683c 25%, #dc2743 50%, #cc2366 75%, #bc1888 100%);
-      }
+    svg {
+      font-size: 20px;
+    }
 
-      /* TikTok Стили */
-      &.tiktok {
-        background: #010101;
-        border: 1px solid #fe2c55;
-      }
+    &:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 20px rgba(0, 0, 0, 0.25);
+      filter: brightness(1.1);
+    }
 
-      /* Email Стили */
-      &.email {
-        background: #ea4335;
-      }
+    &.telegram {
+      background: #229ed9;
+    }
+    &.whatsapp {
+      background: #25d366;
+    }
+    &.instagram {
+      background: linear-gradient(
+        45deg,
+        #f09433 0%,
+        #e6683c 25%,
+        #dc2743 50%,
+        #cc2366 75%,
+        #bc1888 100%
+      );
+    }
+    &.tiktok {
+      background: #010101;
+      border: 1px solid #fe2c55;
+    }
+    &.email {
+      background: #ea4335;
     }
   }
 }

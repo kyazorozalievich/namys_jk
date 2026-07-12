@@ -1,0 +1,435 @@
+$gold-primary: #d1a959;
+$gold-hover: #b68a3d;
+$text-dark: #111111;
+$text-muted: gray;
+$border-color: #ececec;
+
+.profilePage {
+  min-height: 100vh;
+  padding: 60px 20px;
+  font-family: "Inter", sans-serif;
+  color: $text-dark;
+  background: white;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.mainCard {
+  width: 100%;
+  max-width: 850px;
+  margin: 0 auto;
+  border-radius: 20px;
+  padding: 35px;
+  background: white;
+  border: 1px solid $border-color;
+  box-sizing: border-box;
+}
+
+.headerSection {
+  text-align: center;
+  margin-bottom: 40px;
+}
+
+.mainTitle {
+  font-size: 32px;
+  margin-bottom: 10px;
+  font-weight: 700;
+}
+
+.description {
+  color: $text-muted;
+  font-size: 15px;
+  max-width: 600px;
+  margin: 0 auto;
+  line-height: 1.5;
+}
+
+.orderForm {
+  display: flex;
+  flex-direction: column;
+  gap: 35px;
+}
+
+.formGroup {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+  border: none;
+  padding: 0;
+  margin: 0;
+}
+
+.groupLabel {
+  font-size: 16px;
+  font-weight: 700;
+  color: $text-dark;
+  padding: 0;
+}
+
+.countriesGrid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 12px;
+}
+
+.countryCard {
+  background: #fafafa;
+  border: 1px solid $border-color;
+  border-radius: 12px;
+  padding: 15px 5px;
+  text-align: center;
+  font-size: 14px;
+  font-weight: 600;
+  color: $text-dark;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  user-select: none;
+  font-family: inherit;
+
+  &:hover {
+    border-color: rgba($gold-primary, 0.6);
+    background: #fffbef;
+  }
+}
+
+.activeCountry {
+  background: $gold-primary !important;
+  border-color: $gold-primary !important;
+  color: white !important;
+  font-weight: 700;
+  box-shadow: 0 4px 12px rgba($gold-primary, 0.2);
+}
+
+.brandsGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
+  gap: 10px;
+  background: #fdfdfd;
+  padding: 15px;
+  border-radius: 15px;
+  border: 1px dashed $border-color;
+}
+
+.brandCard {
+  background: white;
+  border: 1px solid $border-color;
+  border-radius: 10px;
+  padding: 12px 5px;
+  text-align: center;
+  font-size: 14px;
+  font-weight: 600;
+  color: $text-dark;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  user-select: none;
+  font-family: inherit;
+
+  &:hover {
+    border-color: rgba($gold-primary, 0.6);
+    background: #fffbef;
+  }
+}
+
+.activeBrand {
+  background: rgba($gold-primary, 0.12) !important;
+  border-color: $gold-primary !important;
+  color: $gold-hover !important;
+  font-weight: 700;
+}
+
+.checkboxGrid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 15px;
+}
+
+.checkboxCard {
+  background: #fafafa;
+  border: 1px solid $border-color;
+  border-radius: 15px;
+  padding: 20px 15px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  cursor: pointer;
+  font-weight: 600;
+  font-size: 14px;
+  transition: 0.2s;
+  user-select: none;
+
+  input {
+    display: none;
+  }
+
+  &:hover {
+    border-color: rgba($gold-primary, 0.5);
+  }
+}
+
+.activeCard {
+  background: rgba($gold-primary, 0.08);
+  border-color: $gold-primary;
+  color: $gold-hover;
+}
+
+.textInput {
+  width: 100%;
+  height: 50px;
+  border: 1px solid $border-color;
+  border-radius: 12px;
+  padding: 0 15px;
+  font-size: 15px;
+  outline: none;
+  background: #fafafa;
+  transition: 0.2s;
+  box-sizing: border-box;
+
+  &:focus {
+    border-color: $gold-primary;
+    background: white;
+  }
+}
+
+.contactInputs {
+  display: flex;
+  gap: 15px;
+}
+
+.selectInputShort {
+  width: 150px;
+  height: 50px;
+  border: 1px solid $border-color;
+  border-radius: 12px;
+  padding: 0 10px;
+  font-size: 15px;
+  background: #fafafa;
+  outline: none;
+  box-sizing: border-box;
+}
+
+.errorMessage {
+  color: #ff4d4d;
+  font-size: 14px;
+  font-weight: 600;
+  margin: 0;
+}
+
+.actionContainer {
+  margin-top: 25px;
+  width: 100%;
+}
+
+.submitBtn {
+  width: 100%;
+  padding: 14px 24px;
+  background: linear-gradient(135deg, #0070f3, #00a4ff);
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  text-align: center;
+
+  &:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(0, 112, 243, 0.4);
+  }
+
+  &:active {
+    transform: translateY(0);
+  }
+}
+
+.modalOverlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100vh;
+  background: rgba(0, 0, 0, 0.4);
+  backdrop-filter: blur(4px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 9999;
+  animation: fadeIn 0.2s ease;
+}
+
+.modalContent {
+  background: white;
+  padding: 35px;
+  border-radius: 20px;
+  max-width: 480px;
+  width: 90%;
+  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.15);
+  text-align: center;
+  animation: scaleUp 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  box-sizing: border-box;
+
+  h2 {
+    font-size: 24px;
+    margin-bottom: 15px;
+    color: $text-dark;
+  }
+  p {
+    color: $text-muted;
+    font-size: 15px;
+    line-height: 1.6;
+    margin-bottom: 15px;
+  }
+}
+
+.modalActions {
+  display: flex;
+  gap: 15px;
+  button {
+    flex: 1;
+    height: 50px;
+    border: none;
+    border-radius: 12px;
+    font-size: 15px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: 0.2s;
+  }
+}
+
+.cancelBtn {
+  background: #ececec;
+  color: $text-dark;
+  &:hover {
+    background: #dbdbdb;
+  }
+}
+
+.telegramBtn {
+  background: #229ed9;
+  color: white;
+  &:hover {
+    background: #1e8ec3;
+  }
+  &:disabled {
+    background: #a2d4ec;
+    cursor: not-allowed;
+  }
+}
+
+.fadeIn {
+  animation: fadeInEffect 0.3s ease-in-out;
+}
+
+@keyframes fadeInEffect {
+  from {
+    opacity: 0;
+    transform: translateY(-5px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes scaleUp {
+  from {
+    transform: scale(0.95);
+    opacity: 0;
+  }
+  to {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+/* ==========================================================================
+   АДАПТИВНОСТЬ (ОТ 1240px ДО 320px)
+   ========================================================================== */
+
+@media (max-width: 1024px) {
+  .mainCard {
+    max-width: 700px;
+    padding: 30px;
+  }
+  .mainTitle {
+    font-size: 28px;
+  }
+}
+
+@media (max-width: 768px) {
+  .profilePage {
+    padding: 30px 15px;
+  }
+  .mainCard {
+    padding: 20px;
+    border-radius: 16px;
+  }
+  .countriesGrid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+  .checkboxGrid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 580px) {
+  .countriesGrid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  .contactInputs {
+    flex-direction: column;
+    gap: 10px;
+  }
+  .selectInputShort {
+    width: 100%;
+  }
+  .modalActions {
+    flex-direction: column-reverse;
+    gap: 10px;
+  }
+}
+
+@media (max-width: 414px) {
+  .mainTitle {
+    font-size: 22px;
+  }
+  .description {
+    font-size: 13px;
+  }
+  .countriesGrid {
+    grid-template-columns: 1fr;
+    gap: 8px;
+  }
+  .brandsGrid {
+    grid-template-columns: repeat(auto-fill, minmax(110px, 1fr));
+    padding: 10px;
+  }
+  .checkboxGrid {
+    grid-template-columns: 1fr;
+    gap: 10px;
+  }
+  .checkboxCard {
+    padding: 15px;
+  }
+}
+
+@media (max-width: 320px) {
+  .mainCard {
+    padding: 15px;
+  }
+  .brandCard {
+    font-size: 13px;
+  }
+}

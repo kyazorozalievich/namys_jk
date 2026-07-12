@@ -4,40 +4,33 @@ import { MdVerified } from "react-icons/md";
 import { RiVipCrownFill } from "react-icons/ri";
 
 const CarCard = ({ car, onOpenModal }) => {
-  // Проверяем наличие фото, берем первую или заглушку
   const mainImage =
-    car.images && car.images.length > 0
+    car.images?.length > 0
       ? car.images[0]
       : "https://via.placeholder.com/240x160?text=No+Photo";
-
   const isAdmin = car.authorRole === "admin";
   const isVip = car.isVip;
-
-  // Определяем класс стиля для карточки в зависимости от приоритета (Admin > VIP > Ordinary)
   const cardStatusClass = isAdmin ? scss.adminCard : isVip ? scss.vipCard : "";
 
   return (
-    <div className={`${scss.card} ${cardStatusClass}`}>
+    <article className={`${scss.card} ${cardStatusClass}`}>
       <div className={scss.cardImg}>
-        <img src={mainImage} alt={car.title} />
+        <img src={mainImage} alt={car.title} loading="lazy" />
 
-        {/* Иконка "Проверено" в верхнем левом углу */}
         {car.verified && (
           <div className={scss.verifiedIcon} title="Проверено администрацией">
             <MdVerified />
           </div>
         )}
 
-        {/* Корона в верхнем правом углу (только если VIP и НЕ админ) */}
         {isVip && !isAdmin && (
           <div className={scss.crownIcon} title="VIP Объявление">
             <RiVipCrownFill />
           </div>
         )}
 
-        {/* Бэйджи статусов внизу фотографии */}
         <div className={scss.badges}>
-          {isAdmin ? <span className={scss.adminBadge}>КЛАН LDR</span> : null}
+          {isAdmin && <span className={scss.adminBadge}>КЛАН LDR</span>}
         </div>
       </div>
 
@@ -45,7 +38,6 @@ const CarCard = ({ car, onOpenModal }) => {
         <div className={scss.cardHeader}>
           <div>
             <h3>{car.title}</h3>
-            {/* Тип кузова аккуратно перенесен под название */}
             <span className={scss.type}>{car.carType || "Седан"}</span>
           </div>
           {car.brand && <span className={scss.brand}>{car.brand}</span>}
@@ -59,33 +51,28 @@ const CarCard = ({ car, onOpenModal }) => {
 
         <div className={scss.bottom}>
           <h2>
-            <span>Цена:</span> {car.price}{" "}
-            {(() => {
-              switch (car.currency) {
-                case "С Сом":
-                  return " C";
-                case "Т Тенге":
-                  return " ₸";
-                case "₽ Рубли":
-                  return " ₽";
-                case "stars":
-                  return " ⭐️";
-                case "$ USD":
-                  return " $";
-                default:
-                  // Если вдруг пришла старая строка или только символ
-                  if (car.currency?.includes("Сом")) return " Сом";
-                  if (car.currency?.includes("Тенге")) return " ₸";
-                  if (car.currency?.includes("Рубли")) return " ₽";
-                  return ` ${car.currency || "$"}`;
-              }
-            })()}
+            <span>Цена:</span> {car.price}
+            {car.currency === "С Сом" && " C"}
+            {car.currency === "Т Тенге" && " ₸"}
+            {car.currency === "₽ Рубли" && " ₽"}
+            {car.currency === "stars" && " ⭐️"}
+            {car.currency === "$ USD" && " $"}
+            {!["С Сом", "Т Тенге", "₽ Рубли", "stars", "$ USD"].includes(
+              car.currency,
+            ) &&
+              (car.currency?.includes("Сом")
+                ? " Сом"
+                : car.currency?.includes("Тенге")
+                  ? " ₸"
+                  : car.currency?.includes("Рубли")
+                    ? " ₽"
+                    : ` ${car.currency || "$"}`)}
           </h2>
 
           <button onClick={() => onOpenModal(car)}>Посмотреть</button>
         </div>
       </div>
-    </div>
+    </article>
   );
 };
 

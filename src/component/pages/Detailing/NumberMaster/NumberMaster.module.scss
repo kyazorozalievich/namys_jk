@@ -6,6 +6,10 @@
   font-family: "DIN 1451 Mittelschrift";
   src: url("../../../../../public/din1451alt.ttf") format("truetype");
 }
+@font-face {
+  font-family: "RoadNumbers";
+  src: url("../../../../../public/RoadNumbers.ttf") format("truetype");
+}
 
 .platePage {
   min-height: 100vh;
@@ -24,6 +28,13 @@
     color: #222;
     font-weight: 800;
     margin-bottom: 20px;
+
+    @media (max-width: 768px) {
+      font-size: 26px;
+    }
+    @media (max-width: 480px) {
+      font-size: 22px;
+    }
   }
 }
 
@@ -31,6 +42,11 @@
   color: #777;
   font-size: 15px;
   margin-bottom: 40px;
+
+  @media (max-width: 480px) {
+    margin-bottom: 25px;
+    font-size: 14px;
+  }
 }
 
 .section {
@@ -50,6 +66,10 @@
   gap: 15px;
   flex-wrap: wrap;
 
+  @media (max-width: 480px) {
+    gap: 10px;
+  }
+
   button {
     background: #fafafa;
     border: 1px solid #ececec;
@@ -59,6 +79,12 @@
     cursor: pointer;
     transition: all 0.25s ease;
     color: #555;
+
+    @media (max-width: 480px) {
+      padding: 10px 18px;
+      font-size: 14px;
+      flex-grow: 1;
+    }
 
     &:hover {
       border-color: #d1a959;
@@ -78,13 +104,17 @@
   }
 }
 
-// Поля ввода
 .inputsForm {
   background: #fafafa;
   border: 1px solid #ececec;
   border-radius: 15px;
   padding: 25px;
   margin: 35px 0;
+
+  @media (max-width: 768px) {
+    padding: 20px;
+    margin: 25px 0;
+  }
 
   h3 {
     margin-bottom: 20px;
@@ -97,6 +127,14 @@
   display: grid;
   grid-template-columns: repeat(3, 1fr);
   gap: 20px;
+
+  @media (max-width: 1024px) {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  @media (max-width: 650px) {
+    grid-template-columns: 1fr;
+    gap: 15px;
+  }
 }
 
 .inputBox {
@@ -112,6 +150,8 @@
 
   input,
   select {
+    width: 100%;
+    box-sizing: border-box;
     padding: 12px;
     border-radius: 8px;
     border: 1px solid #ddd;
@@ -126,9 +166,12 @@
   }
 }
 
-// Конструктор отрисовки Гос Номеров
 .previewSection {
   margin: 40px 0;
+
+  @media (max-width: 768px) {
+    margin: 30px 0;
+  }
 
   h3 {
     margin-bottom: 15px;
@@ -141,9 +184,19 @@
   display: flex;
   justify-content: center;
   padding: 20px 0;
+  overflow: visible;
+
+  @media (max-width: 420px) {
+    transform: scale(0.85);
+    transform-origin: center center;
+    margin: -10px 0;
+  }
+  @media (max-width: 360px) {
+    transform: scale(0.75);
+    margin: -20px 0;
+  }
 }
 
-/* Базовая рамка гос номера */
 .kgPlate,
 .kzPlate,
 .ruPlate,
@@ -159,14 +212,15 @@
   box-shadow: 0 8px 20px rgba(0, 0, 0, 0.08);
   position: relative;
   user-select: none;
+  flex-shrink: 0;
 }
 
-/* Кыргызский номер */
 .kgPlate {
   justify-content: flex-start;
   height: 80px;
   font-family: "FE-Schrift";
   font-weight: 500;
+
   .leftSide {
     display: flex;
     flex-direction: column;
@@ -176,11 +230,13 @@
     height: 100%;
     width: 120px;
     gap: 10px;
+
     .flag {
       display: flex;
       align-items: center;
       justify-content: center;
       gap: 5px;
+
       span {
         font-size: 18px;
         font-weight: 800;
@@ -226,13 +282,13 @@
   }
 }
 
-/* Старый КГ номер */
 .oldPlate {
   display: flex;
   justify-content: start;
   letter-spacing: 3px;
   font-family: "DIN 1451 Mittelschrift";
   height: 80px;
+
   .leftSideOld {
     height: 100%;
     width: 50px;
@@ -241,6 +297,7 @@
     align-items: center;
     justify-content: center;
     border-right: 7px solid gray;
+
     img {
       width: 30px;
     }
@@ -251,6 +308,7 @@
     display: flex;
     align-items: center;
     justify-content: center;
+
     .mainText {
       display: flex;
       align-items: center;
@@ -260,16 +318,11 @@
   }
 }
 
-/* Казахстан */
-@font-face {
-  font-family: "RoadNumbers";
-  src: url("../../../../../public/RoadNumbers.ttf") format("truetype");
-}
-
 .kzPlate {
   display: flex;
   align-items: center;
-  justify-content: space-between;
+  justify-open: space-between;
+
   .leftSide {
     display: flex;
     align-items: center;
@@ -277,6 +330,7 @@
     justify-content: center;
     width: 45px;
     height: 100%;
+
     img {
       width: 45px;
     }
@@ -292,6 +346,7 @@
     justify-content: center;
     width: 240px;
     height: 100%;
+
     .mainText {
       letter-spacing: 2px;
     }
@@ -303,6 +358,7 @@
     justify-content: center;
     border-left: 2px solid black;
     width: 70px;
+
     .regNum {
       font-size: 70px;
       font-family: "RoadNumbers";
@@ -310,7 +366,6 @@
   }
 }
 
-/* Россия */
 .ruPlate {
   display: flex;
   justify-content: space-between;
@@ -322,6 +377,7 @@
     width: 100%;
     height: 100%;
     gap: 10px;
+
     span {
       letter-spacing: 3px;
     }
@@ -336,6 +392,7 @@
     height: 100%;
     width: 120px;
     gap: 5px;
+
     .regNum {
       font-family: "RoadNumbers";
       font-size: 50px;
@@ -351,6 +408,7 @@
       align-items: center;
       justify-content: center;
       gap: 5px;
+
       span {
         font-size: 15px;
       }
@@ -363,7 +421,6 @@
   }
 }
 
-// Финал: Кнопка и цена
 .priceBlock {
   display: flex;
   justify-content: space-between;
@@ -371,6 +428,12 @@
   border-top: 1px solid #ececec;
   padding-top: 30px;
   margin-top: 20px;
+
+  @media (max-width: 650px) {
+    flex-direction: column;
+    gap: 20px;
+    text-align: center;
+  }
 }
 
 .priceInfo {
@@ -382,6 +445,10 @@
     color: #d1a959;
     font-size: 28px;
     font-weight: 800;
+
+    @media (max-width: 480px) {
+      font-size: 24px;
+    }
   }
 }
 
@@ -396,21 +463,27 @@
   cursor: pointer;
   transition: all 0.3s ease;
 
+  @media (max-width: 650px) {
+    width: 100%;
+  }
+
   &:hover {
     background: #222;
     transform: translateY(-2px);
   }
 }
 
-/* ========================================== */
-/* ПЕРЕКЛЮЧАТЕЛЬ РАЗМЕРОВ (ШАПКА ПРЕВЬЮ) */
-/* ========================================== */
-
 .previewHeader {
   display: flex;
   justify-content: space-between;
   align-items: center;
   margin-bottom: 20px;
+
+  @media (max-width: 520px) {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 15px;
+  }
 
   h3 {
     margin-bottom: 0 !important;
@@ -420,6 +493,10 @@
 .sizeToggle {
   display: flex;
   gap: 8px;
+
+  @media (max-width: 520px) {
+    width: 100%;
+  }
 
   button {
     background: #fafafa;
@@ -431,6 +508,12 @@
     cursor: pointer;
     transition: all 0.2s ease;
     color: #555;
+
+    @media (max-width: 520px) {
+      flex-grow: 1;
+      text-align: center;
+      padding: 10px;
+    }
 
     &:hover:not(:disabled) {
       border-color: #d1a959;
@@ -450,11 +533,6 @@
   }
 }
 
-/* ========================================== */
-/* СТИЛИ ДЛЯ КВАДРАТНЫХ НОМЕРОВ (ТИП 1А / ТИП 2) */
-/* ========================================== */
-
-/* Общие пропорции для всех квадратных номеров */
 .kgPlateSquare,
 .kzPlateSquare,
 .ruPlateSquare,
@@ -463,15 +541,15 @@
   border: 4px solid #111;
   color: #111;
   border-radius: 6px;
-  width: 270px; /* Идеальные пропорции для квадрата */
+  width: 270px;
   height: 170px;
   box-shadow: 0 8px 20px rgba(0, 0, 0, 0.08);
   position: relative;
   user-select: none;
   overflow: hidden;
+  flex-shrink: 0;
 }
 
-/* --- КЫРГЫЗСТАН КВАДРАТНЫЙ --- */
 .kgPlateSquare {
   display: flex;
   align-items: center;
@@ -496,6 +574,7 @@
       align-items: center;
       flex-direction: column;
       gap: 5px;
+
       span {
         font-size: 25px;
         letter-spacing: 2px;
@@ -525,13 +604,13 @@
   }
 }
 
-/* --- СТАРЫЙ KG КВАДРАТНЫЙ --- */
 .oldPlateSquare {
   display: flex;
   align-items: center;
   flex-direction: column;
   justify-content: center;
   font-family: "DIN 1451 Mittelschrift";
+
   .squareOldDigits {
     font-size: 90px;
     letter-spacing: 4px;
@@ -542,6 +621,7 @@
     align-items: center;
     justify-content: center;
     gap: 10px;
+
     img {
       width: 90px;
       height: 50px;
@@ -556,7 +636,6 @@
   }
 }
 
-/* --- КАЗАХСТАН КВАДРАТНЫЙ --- */
 .kzPlateSquare {
   display: flex;
   align-items: center;
@@ -576,6 +655,7 @@
       align-items: center;
       justify-content: center;
       height: 50%;
+
       img {
         width: 60px;
       }
@@ -596,6 +676,7 @@
       border-top: 2px solid black;
       border-right: 2px solid black;
       border-top-right-radius: 10px;
+
       .regNum {
         font-size: 70px;
         font-family: "RoadNumbers";
@@ -628,7 +709,6 @@
   }
 }
 
-/* --- РОССИЯ КВАДРАТНЫЙ --- */
 .ruPlateSquare {
   display: flex;
   flex-direction: column;
@@ -639,6 +719,7 @@
     align-items: center;
     height: 50%;
     gap: 15px;
+
     span {
       letter-spacing: 2px;
     }
@@ -668,6 +749,7 @@
       border-top: 2px solid black;
       border-left: 2px solid black;
       border-top-left-radius: 10px;
+
       .regNumSquare {
         font-family: "RoadNumbers";
         font-size: 60px;
@@ -682,6 +764,7 @@
         display: flex;
         align-items: center;
         gap: 5px;
+
         span {
           font-size: 18px;
           font-weight: 700;
@@ -696,7 +779,6 @@
   }
 }
 
-// Модальное окно заказа
 .modalOverlay {
   position: fixed;
   top: 0;
@@ -708,6 +790,7 @@
   align-items: center;
   justify-content: center;
   z-index: 999;
+  padding: 15px;
 }
 
 .modalContent {
@@ -715,12 +798,21 @@
   padding: 35px;
   border-radius: 20px;
   max-width: 450px;
-  width: 90%;
+  width: 100%;
   box-shadow: 0 20px 50px rgba(0, 0, 0, 0.15);
+  box-sizing: border-box;
+
+  @media (max-width: 480px) {
+    padding: 20px;
+  }
 
   h3 {
     font-size: 22px;
     margin-bottom: 10px;
+
+    @media (max-width: 480px) {
+      font-size: 19px;
+    }
   }
 
   p {
@@ -736,6 +828,10 @@
   gap: 15px;
   margin-bottom: 20px;
 
+  @media (max-width: 480px) {
+    gap: 10px;
+  }
+
   button {
     flex: 1;
     padding: 12px;
@@ -744,6 +840,12 @@
     font-weight: 700;
     cursor: pointer;
     background: #fafafa;
+    font-size: 14px;
+
+    @media (max-width: 480px) {
+      padding: 10px;
+      font-size: 13px;
+    }
   }
 
   .activeModalTab {
@@ -766,6 +868,8 @@
   }
 
   input {
+    width: 100%;
+    box-sizing: border-box;
     padding: 12px;
     border-radius: 8px;
     border: 1px solid #ddd;
@@ -782,6 +886,10 @@
   display: flex;
   gap: 15px;
 
+  @media (max-width: 480px) {
+    gap: 10px;
+  }
+
   button {
     flex: 1;
     padding: 12px;
@@ -789,6 +897,11 @@
     font-weight: 700;
     cursor: pointer;
     border: none;
+
+    @media (max-width: 480px) {
+      padding: 10px;
+      font-size: 14px;
+    }
   }
 
   .cancelBtn {
@@ -802,16 +915,8 @@
   }
 }
 
-@media (max-width: 650px) {
-  .inputsGrid {
-    grid-template-columns: 1fr;
-  }
-  .priceBlock {
-    flex-direction: column;
-    gap: 20px;
-    text-align: center;
-  }
-  .orderBtn {
-    width: 100%;
+@media (max-width: 1240px) {
+  .platePage {
+    padding: 100px 24px 40px;
   }
 }

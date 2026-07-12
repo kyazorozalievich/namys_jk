@@ -10,12 +10,11 @@ import {
   updateDoc,
   increment,
 } from "firebase/firestore";
-import { ToastContainer, toast } from "react-toastify"; // Импортируем Toastify
-import "react-toastify/dist/ReactToastify.css"; // Импортируем стили тостов
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 import scss from "./UserCars.module.scss";
 
-// Иконки для компактного вида
-import { FaCar, FaTrashAlt, FaHorseHead, FaLayerGroup } from "react-icons/fa";
+import { FaTrashAlt, FaHorseHead, FaLayerGroup } from "react-icons/fa";
 import { MdVerifiedUser, MdPendingActions } from "react-icons/md";
 
 const UserCars = () => {
@@ -51,7 +50,7 @@ const UserCars = () => {
         setLoading(false);
       },
       (error) => {
-        console.error("Ошибка при получении объявлений: ", error);
+        console.error(error);
         toast.error("Ошибка при загрузке ваших объявлений");
         setLoading(false);
       },
@@ -62,17 +61,15 @@ const UserCars = () => {
 
   const handleDelete = async (carId) => {
     try {
-      // Удаляем сразу без блокирующего окна confirm
       await deleteDoc(doc(db, "cars", carId));
       if (currentUser) {
         await updateDoc(doc(db, "users", currentUser.uid), {
           adsUsed: increment(-1),
         });
       }
-      // Красивый желтый/оранжевый тост предупреждения об удалении
       toast.warning("Объявление успешно удалено!");
     } catch (error) {
-      console.error("Ошибка при удалении автомобиля:", error);
+      console.error(error);
       toast.error("Не удалось удалить объявление. Попробуйте позже.");
     }
   };
@@ -90,49 +87,47 @@ const UserCars = () => {
   }
 
   return (
-    <div className={scss.userCarsPage}>
-      {/* Подключаем контейнер. Если он уже есть в App.jsx, эту строчку можно удалить */}
+    <section className={scss.userCarsPage}>
       <ToastContainer position="top-right" autoClose={3000} theme="colored" />
 
-      <div className={scss.headerSection}>
+      <header className={scss.headerSection}>
         <div>
-          <h2>Мои объявления</h2>
+          <h1>Мои объявления</h1>
           <p>Управление вашим транспортом на авторынке</p>
         </div>
         <div className={scss.counter}>
           Активных авто: <span>{myCars.length}</span>
         </div>
-      </div>
+      </header>
 
       {myCars.length === 0 ? (
         <div className={scss.emptyState}>
           <div className={scss.emptyIcon}>🚗</div>
-          <h3>У вас пока нет объявлений</h3>
+          <h2>У вас пока нет объявлений</h2>
           <p>Опубликуйте машину во вкладке «Разместить автомобиль».</p>
         </div>
       ) : (
         <div className={scss.carsList}>
           {myCars.map((car) => (
-            <div
+            <article
               key={car.id}
               className={`${scss.compactCard} ${car.isVip ? scss.vipRow : ""}`}
             >
-              {/* Блок с фото */}
               <div className={scss.imgBlock}>
                 <img
                   src={
                     car.images?.[0] ||
                     "https://via.placeholder.com/150x100?text=No+Photo"
                   }
-                  alt={car.title}
+                  alt={`Фото автомобиля ${car.title}`}
+                  loading="lazy"
                 />
                 {car.isVip && <span className={scss.vipMiniBadge}>⭐ VIP</span>}
               </div>
 
-              {/* Основная инфа */}
               <div className={scss.detailsBlock}>
                 <div className={scss.mainRow}>
-                  <h3>{car.title}</h3>
+                  <h2>{car.title}</h2>
                   <span className={scss.price}>
                     {car.price}{" "}
                     {car.currency === "stars"
@@ -141,13 +136,13 @@ const UserCars = () => {
                   </span>
                 </div>
 
-                {/* Мелкие характеристики в строчку */}
                 <div className={scss.metaRow}>
                   <span>
-                    <FaHorseHead /> {car.power || "—"} HP
+                    <FaHorseHead aria-hidden="true" /> {car.power || "—"} HP
                   </span>
                   <span>
-                    <FaLayerGroup /> {car.carType || "Легковой"}
+                    <FaLayerGroup aria-hidden="true" />{" "}
+                    {car.carType || "Легковой"}
                   </span>
                   <span
                     className={
@@ -156,33 +151,32 @@ const UserCars = () => {
                   >
                     {car.verified ? (
                       <>
-                        <MdVerifiedUser /> Активно
+                        <MdVerifiedUser aria-hidden="true" /> Активно
                       </>
                     ) : (
                       <>
-                        <MdPendingActions /> На проверке
+                        <MdPendingActions aria-hidden="true" /> На проверке
                       </>
                     )}
                   </span>
                 </div>
               </div>
 
-              {/* Кнопка действия (вмещается справа) */}
               <div className={scss.actionsBlock}>
                 <button
                   className={scss.btnDeleteMini}
                   onClick={() => handleDelete(car.id)}
-                  title="Удалить объявление"
+                  aria-label={`Удалить объявление ${car.title}`}
                 >
-                  <FaTrashAlt />
+                  <FaTrashAlt aria-hidden="true" />
                   <span>Удалить</span>
                 </button>
               </div>
-            </div>
+            </article>
           ))}
         </div>
       )}
-    </div>
+    </section>
   );
 };
 

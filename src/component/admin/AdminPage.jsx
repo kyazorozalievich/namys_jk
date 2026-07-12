@@ -7,39 +7,24 @@ import {
   updateDoc,
   deleteDoc,
   addDoc,
-  query,
-  where,
   getDocs,
-  writeBatch,
-  increment,
-  setDoc,
+  query,
 } from "firebase/firestore";
 import AdminMasters from "./AdminMasters";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import scss from "./AdminPage.module.scss";
 
-const DETAILING_LIST = [
-  { id: "plates", title: "Изготовление гос номеров" },
-  { id: "gg_services", title: "Всем известные GG услуги" },
-  { id: "badges", title: "Шильдики и таблички на любую машину" },
-  { id: "market", title: "Продажа авто и аккаунтов" },
-  { id: "branding", title: "Логотипы и брендинг кланов" },
-  { id: "montage", title: "Фото- и видеомонтажи тачек" },
-];
-
 const AdminPage = () => {
   const [cars, setCars] = useState([]);
   const [users, setUsers] = useState([]);
   const [clanLeaders, setClanLeaders] = useState([]);
   const [clanMembers, setClanMembers] = useState([]);
-  const [detailingServices, setDetailingServices] = useState({});
   const [clanImage, setClanImage] = useState(null);
 
   const [loadingCars, setLoadingCars] = useState(true);
   const [loadingUsers, setLoadingUsers] = useState(true);
   const [loadingClan, setLoadingClan] = useState(true);
-  const [loadingServices, setLoadingServices] = useState(true);
 
   const [activeSection, setActiveSection] = useState("ads");
   const [carFilter, setCarFilter] = useState("all");
@@ -65,7 +50,7 @@ const AdminPage = () => {
         carsData.push({ id: doc.id, ...doc.data() });
       });
       setCars(carsData);
-      loadingCars && setLoadingCars(false);
+      if (loadingCars) setLoadingCars(false);
     });
     return () => unsubscribeCars();
   }, [loadingCars]);
@@ -77,7 +62,7 @@ const AdminPage = () => {
         usersData.push({ id: doc.id, ...doc.data() });
       });
       setUsers(usersData);
-      loadingUsers && setLoadingUsers(false);
+      if (loadingUsers) setLoadingUsers(false);
     });
     return () => unsubscribeUsers();
   }, [loadingUsers]);
@@ -98,7 +83,7 @@ const AdminPage = () => {
         const data = [];
         snapshot.forEach((doc) => data.push({ id: doc.id, ...doc.data() }));
         setClanMembers(data);
-        loadingClan && setLoadingClan(false);
+        if (loadingClan) setLoadingClan(false);
       },
     );
 
@@ -107,36 +92,6 @@ const AdminPage = () => {
       unsubMembers();
     };
   }, [loadingClan]);
-
-  useEffect(() => {
-    const unsubscribeServices = onSnapshot(
-      collection(db, "detailing_services"),
-      (snapshot) => {
-        const servicesData = {};
-        snapshot.forEach((doc) => {
-          servicesData[doc.id] = doc.data().active;
-        });
-        setDetailingServices(servicesData);
-        setLoadingServices(false);
-      },
-    );
-    return () => unsubscribeServices();
-  }, []);
-
-  const handleToggleService = async (serviceId, currentStatus) => {
-    try {
-      const newStatus = currentStatus === undefined ? false : !currentStatus;
-      await setDoc(
-        doc(db, "detailing_services", serviceId),
-        { active: newStatus },
-        { merge: true },
-      );
-      toast.success(`Статус услуги успешно обновлен!`);
-    } catch (err) {
-      console.error(err);
-      toast.error("Не удалось изменить статус услуги");
-    }
-  };
 
   const handleAddClanPerson = async (e) => {
     e.preventDefault();
@@ -219,19 +174,12 @@ const AdminPage = () => {
     try {
       await deleteDoc(doc(db, "cars", car.id));
       if (car.authorId) {
-        await updateDoc(doc(db, "users", car.authorId), {
-          adsUsed: increment(-1),
-        });
-      } else if (car.authorEmail) {
-        const q = query(
-          collection(db, "users"),
-          where("email", "==", car.authorEmail),
-        );
-        const snap = await getDocs(q);
-        if (!snap.empty) {
-          await updateDoc(doc(db, "users", snap.docs[0].id), {
-            adsUsed: increment(-1),
-          });
+        const userRef = doc(db, "users", car.authorId);
+        const userSnap = await getDocs(query(collection(db, "users")));
+        const targetUser = userSnap.docs.find((d) => d.id === car.authorId);
+        if (targetUser) {
+          const currentAds = targetUser.data().adsUsed || 0;
+          await updateDoc(userRef, { adsUsed: Math.max(0, currentAds - 1) });
         }
       }
       toast.warning("Объявление удалено, лимит возвращен пользователю");
@@ -280,11 +228,9 @@ const AdminPage = () => {
     }
   };
 
-  // ИСПРАВЛЕННАЯ ФУНКЦИЯ БАНА
   const handleToggleBan = async (user) => {
     const willBan = !user.isBanned;
     try {
-      // 1. Обновляем статус самого пользователя
       const updateData = {
         isBanned: willBan,
         marketStatus: willBan ? "restricted" : "active",
@@ -295,31 +241,25 @@ const AdminPage = () => {
       }
       await updateDoc(doc(db, "users", user.id), updateData);
 
-      // 2. Ищем и скрываем/активируем его машины пакетным запросом (Batch)
-      const batch = writeBatch(db);
-
-      // Делаем двойную проверку: ищем и по id, и по email, чтобы точно найти документы
       const carsRef = collection(db, "cars");
       let snapshot;
 
       if (user.id) {
-        const qById = query(carsRef, where("authorId", "==", user.id));
-        snapshot = await getDocs(qById);
+        const qById = query(carsRef);
+        const res = await getDocs(qById);
+        snapshot = res.docs.filter((d) => d.data().authorId === user.id);
       }
 
-      // Если по ID ничего не нашлось, но есть email — ищем по email
-      if ((!snapshot || snapshot.empty) && user.email) {
-        const qByEmail = query(carsRef, where("authorEmail", "==", user.email));
-        snapshot = await getDocs(qByEmail);
+      if ((!snapshot || snapshot.length === 0) && user.email) {
+        const qByEmail = query(carsRef);
+        const res = await getDocs(qByEmail);
+        snapshot = res.docs.filter((d) => d.data().authorEmail === user.email);
       }
 
-      // Если машины найдены, добавляем их изменения в batch
-      if (snapshot && !snapshot.empty) {
-        snapshot.forEach((carDoc) => {
-          // Если баним — verified становится false (в ожидание), если разбаниваем — true (активен)
-          batch.update(doc(db, "cars", carDoc.id), { verified: !willBan });
-        });
-        await batch.commit();
+      if (snapshot && snapshot.length > 0) {
+        for (const carDoc of snapshot) {
+          await updateDoc(doc(db, "cars", carDoc.id), { verified: !willBan });
+        }
       }
 
       if (willBan) {
@@ -333,9 +273,7 @@ const AdminPage = () => {
       }
     } catch (e) {
       console.error(e);
-      toast.error(
-        "Ошибка при изменении статуса блокировки и обновлении объявлений",
-      );
+      toast.error("Ошибка при изменении статуса блокировки");
     }
   };
 
@@ -360,8 +298,12 @@ const AdminPage = () => {
     return true;
   });
 
-  if (loadingCars || loadingUsers || loadingClan || loadingServices) {
-    return <div className={scss.loader}>Загрузка админ-панели...</div>;
+  if (loadingCars || loadingUsers || loadingClan) {
+    return (
+      <div className={scss.loader} role="alert">
+        Загрузка админ-панели...
+      </div>
+    );
   }
 
   const handleImageChange = (e) => {
@@ -376,11 +318,14 @@ const AdminPage = () => {
   };
 
   return (
-    <section className={scss.adminPage}>
+    <main className={scss.adminPage}>
       <ToastContainer position="top-right" autoClose={3000} theme="colored" />
 
       <div className={scss.adminContainer}>
-        <div className={scss.sectionTabs}>
+        <nav
+          className={scss.sectionTabs}
+          aria-label="Навигация по админ-панели"
+        >
           <button
             className={activeSection === "ads" ? scss.activeSectionTab : ""}
             onClick={() => setActiveSection("ads")}
@@ -407,24 +352,14 @@ const AdminPage = () => {
           >
             🔧 Услуги Детейлинга
           </button>
-        </div>
+        </nav>
 
         <hr className={scss.separator} />
 
-        {/* 1. ОБЪЯВЛЕНИЯ */}
         {activeSection === "ads" && (
-          <>
-            <div
-              className={scss.filterTabs}
-              style={{
-                display: "flex",
-                justifyContent: "space-between",
-                alignItems: "center",
-                flexWrap: "wrap",
-                gap: "15px",
-              }}
-            >
-              <div>
+          <section aria-label="Управление объявлениями">
+            <div className={scss.filterTabs}>
+              <div className={scss.tabButtons}>
                 <button
                   className={carFilter === "all" ? scss.activeTab : ""}
                   onClick={() => setCarFilter("all")}
@@ -447,22 +382,15 @@ const AdminPage = () => {
 
               <div className={scss.searchBox}>
                 <input
-                  type="text"
-                  placeholder="Поиск по email (например: ник или ник@gmail.com)"
+                  type="search"
+                  placeholder="Поиск по email"
                   value={carsSearchQuery}
                   onChange={(e) => setCarsSearchQuery(e.target.value)}
-                  style={{
-                    padding: "8px 12px",
-                    borderRadius: "6px",
-                    border: "1px solid #ccc",
-                    width: "300px",
-                    fontSize: "14px",
-                  }}
                 />
               </div>
             </div>
 
-            <div className={scss.tableWrapper}>
+            <div className={`${scss.tableWrapper} ${scss.carsTable}`}>
               <table className={scss.adminTable}>
                 <thead>
                   <tr>
@@ -480,7 +408,7 @@ const AdminPage = () => {
                       <td>
                         <img
                           src={car.images?.[0] || ""}
-                          alt=""
+                          alt={car.title || "Фото авто"}
                           className={scss.carThumb}
                         />
                       </td>
@@ -534,10 +462,7 @@ const AdminPage = () => {
                   ))}
                   {filteredCars.length === 0 && (
                     <tr>
-                      <td
-                        colSpan="6"
-                        style={{ textAlign: "center", padding: "20px" }}
-                      >
+                      <td colSpan="6" className={scss.noResults}>
                         Объявления не найдены
                       </td>
                     </tr>
@@ -545,32 +470,17 @@ const AdminPage = () => {
                 </tbody>
               </table>
             </div>
-          </>
+          </section>
         )}
 
-        {/* 2. ПОЛЬЗОВАТЕЛИ */}
         {activeSection === "users" && (
-          <>
-            <div
-              className={scss.searchBox}
-              style={{
-                marginBottom: "15px",
-                display: "flex",
-                justifyContent: "flex-end",
-              }}
-            >
+          <section aria-label="Управление пользователями">
+            <div className={scss.searchBoxSection}>
               <input
-                type="text"
-                placeholder="Поиск по email (например: ник или ник@gmail.com)"
+                type="search"
+                placeholder="Поиск по email"
                 value={usersSearchQuery}
                 onChange={(e) => setUsersSearchQuery(e.target.value)}
-                style={{
-                  padding: "8px 12px",
-                  borderRadius: "6px",
-                  border: "1px solid #ccc",
-                  width: "300px",
-                  fontSize: "14px",
-                }}
               />
             </div>
 
@@ -602,7 +512,7 @@ const AdminPage = () => {
                           )}
                         </div>
                       </td>
-                      <td>
+                      {/* <td>
                         <div className={scss.actions}>
                           <button
                             className={scss.btnRoleToggle}
@@ -613,16 +523,17 @@ const AdminPage = () => {
                               : "Пользователь"}
                           </button>
                         </div>
-                      </td>
+                      </td> */}
                       <td>
-                        <span
+                        <button
+                          type="button"
                           className={`${scss.tariffBadge} ${user.plan === "vip" ? scss.vipTariff : scss.baseTariff}`}
                           onClick={() =>
                             handleToggleUserPlan(user.id, user.plan)
                           }
                         >
                           {user.plan === "vip" ? "⭐ VIP План" : "Базовый"}
-                        </span>
+                        </button>
                       </td>
                       <td>
                         <div className={scss.specs}>
@@ -660,10 +571,7 @@ const AdminPage = () => {
                   ))}
                   {filteredUsers.length === 0 && (
                     <tr>
-                      <td
-                        colSpan="6"
-                        style={{ textAlign: "center", padding: "20px" }}
-                      >
+                      <td colSpan="6" className={scss.noResults}>
                         Пользователи не найдены
                       </td>
                     </tr>
@@ -671,18 +579,18 @@ const AdminPage = () => {
                 </tbody>
               </table>
             </div>
-          </>
+          </section>
         )}
 
-        {/* 3. КЛАН */}
         {activeSection === "clan" && (
-          <div className={scss.clanSection}>
+          <section className={scss.clanSection} aria-label="Управление кланом">
             <form onSubmit={handleAddClanPerson} className={scss.clanForm}>
               <h3>➕ Добавить в списки клана</h3>
               <div className={scss.formGrid}>
                 <div className={scss.inputGroup}>
-                  <label>Категория</label>
+                  <label htmlFor="clanCategory">Категория</label>
                   <select
+                    id="clanCategory"
                     value={newType}
                     onChange={(e) => setNewType(e.target.value)}
                     className={scss.statusSelect}
@@ -695,8 +603,9 @@ const AdminPage = () => {
                 {newType === "member" ? (
                   <>
                     <div className={scss.inputGroup}>
-                      <label>Игровой Никнейм</label>
+                      <label htmlFor="clanNickname">Игровой Никнейм</label>
                       <input
+                        id="clanNickname"
                         type="text"
                         required
                         value={memberForm.nickname}
@@ -709,8 +618,9 @@ const AdminPage = () => {
                       />
                     </div>
                     <div className={scss.inputGroup}>
-                      <label>Звание в клане</label>
+                      <label htmlFor="clanRank">Звание в клане</label>
                       <select
+                        id="clanRank"
                         value={memberForm.rating}
                         onChange={(e) =>
                           setMemberForm({
@@ -728,8 +638,9 @@ const AdminPage = () => {
                 ) : (
                   <>
                     <div className={scss.inputGroup}>
-                      <label>Имя / Ник Лидера</label>
+                      <label htmlFor="leaderName">Имя / Ник Лидера</label>
                       <input
+                        id="leaderName"
                         type="text"
                         required
                         value={memberForm.name}
@@ -739,8 +650,9 @@ const AdminPage = () => {
                       />
                     </div>
                     <div className={scss.inputGroup}>
-                      <label>ID (Тег)</label>
+                      <label htmlFor="leaderId">ID (Тег)</label>
                       <input
+                        id="leaderId"
                         type="text"
                         required
                         value={memberForm.idField}
@@ -753,8 +665,9 @@ const AdminPage = () => {
                       />
                     </div>
                     <div className={scss.inputGroup}>
-                      <label>Описание</label>
+                      <label htmlFor="leaderDesc">Описание</label>
                       <input
+                        id="leaderDesc"
                         type="text"
                         value={memberForm.desc}
                         onChange={(e) =>
@@ -767,8 +680,9 @@ const AdminPage = () => {
                 )}
 
                 <div className={scss.inputGroup}>
-                  <label>Гос. Номер машины</label>
+                  <label htmlFor="gosNom">Гос. Номер машины</label>
                   <input
+                    id="gosNom"
                     type="text"
                     required
                     value={memberForm.gosNom}
@@ -779,28 +693,22 @@ const AdminPage = () => {
                   />
                 </div>
 
-                <div
-                  className={scss.inputGroup}
-                  style={{ gridColumn: "1 / -1" }}
-                >
-                  <label>Фото участника (из галереи)</label>
+                <div className={scss.inputGroupFile}>
+                  <label htmlFor="clanImageFile">
+                    Фото участника (из галереи)
+                  </label>
                   <input
+                    id="clanImageFile"
                     type="file"
                     accept="image/*"
                     onChange={handleImageChange}
-                    style={{ border: "none", padding: "5px 0" }}
                   />
                   {clanImage && (
-                    <div style={{ marginTop: "10px" }}>
+                    <div className={scss.imagePreviewWrapper}>
                       <img
                         src={clanImage}
-                        alt="Превью"
-                        style={{
-                          width: "80px",
-                          height: "80px",
-                          borderRadius: "50%",
-                          objectFit: "cover",
-                        }}
+                        alt="Превью участника клана"
+                        className={scss.previewAvatar}
                       />
                     </div>
                   )}
@@ -812,7 +720,7 @@ const AdminPage = () => {
             </form>
 
             <h3 className={scss.tableTitle}>👑 Корона клана (Лидеры)</h3>
-            <div className={scss.tableWrapper} style={{ marginBottom: "30px" }}>
+            <div className={scss.tableWrapper}>
               <table className={scss.adminTable}>
                 <thead>
                   <tr>
@@ -825,7 +733,6 @@ const AdminPage = () => {
                 <tbody>
                   {clanLeaders.map((l) => (
                     <tr key={l.id}>
-                      {/* У лидеров ник хранился в nickname/name, подправлено */}
                       <td>{l.nickname || l.name}</td>
                       <td>{l.id}</td>
                       <td>{l.gosNom}</td>
@@ -873,13 +780,12 @@ const AdminPage = () => {
                 </tbody>
               </table>
             </div>
-          </div>
+          </section>
         )}
 
-        {/* 4. УПРАВЛЕНИЕ УСЛУГАМИ ДЕТЕЙЛИНГА */}
         {activeSection === "services" && <AdminMasters />}
       </div>
-    </section>
+    </main>
   );
 };
 

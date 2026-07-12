@@ -1,21 +1,89 @@
 .historySec {
-    margin-block: 100px;
+  margin-block: 100px;
+
   .nav {
     display: flex;
     align-items: center;
     flex-direction: column;
     gap: 20px;
+
     h1 {
       font-family: sans-serif;
+      richmond-size: 40px;
       font-size: 40px;
+      text-align: center;
     }
+
     p {
-        text-align: center;
-        width: 75%;
-        line-height: 25px;
-        span {
-            color: #b68a3d;
-        }
+      text-align: center;
+      width: 100%;
+      max-width: 780px;
+      line-height: 25px;
+
+      span {
+        color: #b68a3d;
+        font-weight: 600;
+      }
+    }
+  }
+}
+
+/* Адаптивная сетка под разные экраны */
+@media (max-width: 1240px) {
+  .historySec {
+    margin-block: 80px;
+
+    .nav {
+      h1 {
+        font-size: 36px;
+      }
+    }
+  }
+}
+
+@media (max-width: 768px) {
+  .historySec {
+    margin-block: 60px;
+    padding-inline: 15px; /* Защитные отступы по бокам */
+
+    .nav {
+      gap: 15px;
+
+      h1 {
+        font-size: 28px;
+      }
+
+      p {
+        font-size: 15px;
+        line-height: 22px;
+      }
+    }
+  }
+}
+
+@media (max-width: 480px) {
+  .historySec {
+    margin-block: 40px;
+
+    .nav {
+      h1 {
+        font-size: 24px;
+      }
+
+      p {
+        font-size: 14px;
+        line-height: 20px;
+      }
+    }
+  }
+}
+
+@media (max-width: 320px) {
+  .historySec {
+    .nav {
+      h1 {
+        font-size: 22px;
+      }
     }
   }
 }

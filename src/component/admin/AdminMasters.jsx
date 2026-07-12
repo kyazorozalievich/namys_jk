@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { db } from "../../firebase/FireBase";
-import { doc, onSnapshot, setDoc, getDoc, updateDoc } from "firebase/firestore";
+import { doc, onSnapshot, setDoc, getDoc } from "firebase/firestore";
 import { toast } from "react-toastify";
 import scss from "./AdminMasters.module.scss";
 
@@ -8,7 +8,6 @@ const DETAILING_LIST = [
   { id: "plates", title: "Изготовление гос номеров" },
   { id: "gg_services", title: "Всем известные GG услуги" },
   { id: "badges", title: "Шильдики и таблички на любую машину" },
-  //   { id: "market", title: "Продажа авто и аккаунтов" },
   { id: "branding", title: "Логотипы и брендинг кланов" },
   { id: "montage", title: "Фото- и видеомонтажи тачек" },
 ];
@@ -137,18 +136,16 @@ const INITIAL_GG_SERVICES = {
 
 const AdminMasters = () => {
   const [dbData, setDbData] = useState({});
-  const [servicesStatus, setServicesStatus] = useState({}); // Стейт для хранения активности категорий (active: true/false)
+  const [servicesStatus, setServicesStatus] = useState({});
   const [loading, setLoading] = useState(true);
   const [selectedServiceId, setSelectedServiceId] = useState(null);
 
-  // Стейт формы нового мастера
   const [newMaster, setNewMaster] = useState({
     nickname: "",
     status: "active",
   });
 
   useEffect(() => {
-    // 1. Загрузка конфигурации мастеров и прайсов
     const docRef = doc(db, "detailing_config", "services_masters");
     const unsubscribe = onSnapshot(
       docRef,
@@ -177,7 +174,6 @@ const AdminMasters = () => {
       },
     );
 
-    // 2. Дополнительно загружаем статусы активности категорий из 'detailing_services'
     const fetchServicesStatus = async () => {
       const statuses = {};
       for (const service of DETAILING_LIST) {
@@ -187,7 +183,7 @@ const AdminMasters = () => {
           if (serviceSnap.exists()) {
             statuses[service.id] = serviceSnap.data().active ?? true;
           } else {
-            statuses[service.id] = true; // по умолчанию активен, если документа нет
+            statuses[service.id] = true;
           }
         } catch (e) {
           console.error(`Ошибка загрузки статуса для ${service.id}:`, e);
@@ -198,13 +194,11 @@ const AdminMasters = () => {
     };
 
     fetchServicesStatus();
-
     return () => unsubscribe();
   }, []);
 
-  // Функция для включения/отключения всей услуги в коллекции detailing_services
   const toggleServiceActive = async (serviceId, e) => {
-    if (e) e.stopPropagation(); // Чтобы не срабатывал клик по карточке, если нажали на кнопку
+    if (e) e.stopPropagation();
     const currentStatus = servicesStatus[serviceId] ?? true;
     const newStatus = !currentStatus;
 
@@ -222,7 +216,6 @@ const AdminMasters = () => {
     }
   };
 
-  // --- ЛОГИКА ДЛЯ МАСТЕРОВ ОБЫЧНЫХ УСЛУГ ---
   const handleLiveEdit = (masterIndex, field, value) => {
     setDbData((prev) => {
       const currentService = prev[selectedServiceId] || { masters: [] };
@@ -269,7 +262,6 @@ const AdminMasters = () => {
     setNewMaster({ nickname: "", status: "active" });
   };
 
-  // --- ЛОГИКА ДЛЯ УПРАВЛЕНИЯ МАСТЕРAМИ ВНУТРИ GG-SERVICES ---
   const handleGgMasterEdit = (masterIndex, field, value) => {
     setDbData((prev) => {
       const currentGg = prev.gg_services || {
@@ -323,7 +315,6 @@ const AdminMasters = () => {
     setNewMaster({ nickname: "", status: "active" });
   };
 
-  // --- ЛОГИКА ДЛЯ ПРАЙС-ЛИСТА GG-УСЛУГ ---
   const handleGgServiceEdit = (subServiceKey, field, value) => {
     setDbData((prev) => {
       const currentGg = prev.gg_services || {
@@ -339,25 +330,6 @@ const AdminMasters = () => {
     });
   };
 
-  // --- ЛОГИКА ДЛЯ ОТКЛЮЧЕНИЯ ВСЕЙ КАТЕГОРИИ GG ---
-  const handleToggleDisableAllGg = () => {
-    setDbData((prev) => {
-      const currentGg = prev.gg_services || {
-        ggList: INITIAL_GG_SERVICES,
-        masters: [],
-      };
-      // Переключаем флаг (если его не было, станет true)
-      const currentDisabledState = !!currentGg.disabledAll;
-      return {
-        ...prev,
-        gg_services: {
-          ...currentGg,
-          disabledAll: !currentDisabledState,
-        },
-      };
-    });
-  };
-
   const handleSaveToFirebase = async () => {
     try {
       await setDoc(doc(db, "detailing_config", "services_masters"), dbData, {
@@ -370,8 +342,13 @@ const AdminMasters = () => {
     }
   };
 
-  if (loading)
-    return <div className={scss.loader}>Загрузка конфигурации услуг...</div>;
+  if (loading) {
+    return (
+      <div className={scss.loader} role="status" aria-live="polite">
+        Загрузка конфигурации услуг...
+      </div>
+    );
+  }
 
   const activeServiceInfo = DETAILING_LIST.find(
     (s) => s.id === selectedServiceId,
@@ -381,24 +358,21 @@ const AdminMasters = () => {
   const currentServiceData = dbData[selectedServiceId] || { masters: [] };
 
   return (
-    <div className={scss.container}>
+    <main className={scss.container}>
       {!selectedServiceId ? (
         <>
-          <h3 className={scss.title}>📋 Услуги Детейлинга и Мастера</h3>
+          <h1 className={scss.title}>📋 Услуги Детейлинга и Мастера</h1>
           <p className={scss.subtitle}>
             Нажмите на нужную категорию для детального управления прайсом или
             мастерами.
           </p>
 
-          <div className={scss.servicesList}>
+          <div className={scss.servicesList} role="grid">
             {DETAILING_LIST.map((service) => {
-              let infoLabel = "";
-              if (service.id === "gg_services") {
-                infoLabel = `Мастеров: ${ggMastersList.length}`;
-              } else {
-                const mastersCount = dbData[service.id]?.masters?.length || 0;
-                infoLabel = `Мастеров: ${mastersCount}`;
-              }
+              const infoLabel =
+                service.id === "gg_services"
+                  ? `Мастеров: ${ggMastersList.length}`
+                  : `Мастеров: ${dbData[service.id]?.masters?.length || 0}`;
 
               const isServiceActive = servicesStatus[service.id] ?? true;
 
@@ -407,22 +381,22 @@ const AdminMasters = () => {
                   key={service.id}
                   className={`${scss.serviceCard} ${!isServiceActive ? scss.rowDisabled : ""}`}
                   onClick={() => setSelectedServiceId(service.id)}
-                  style={{ position: "relative" }}
+                  role="button"
+                  tabIndex={0}
+                  onKeyDown={(e) =>
+                    e.key === "Enter" && setSelectedServiceId(service.id)
+                  }
                 >
                   <div className={scss.serviceHeader}>
                     <div>
-                      <h4>{service.title}</h4>
-                      <span
-                        className={scss.badge}
-                        style={{ marginRight: "10px" }}
-                      >
-                        {infoLabel}
-                      </span>
+                      <h2>{service.title}</h2>
+                      <span className={scss.badge}>{infoLabel}</span>
                     </div>
 
-                    {/* КНОПКА ВКЛЮЧЕНИЯ/ОТКЛЮЧЕНИЯ НА ГЛАВНОЙ */}
                     <button
+                      type="button"
                       onClick={(e) => toggleServiceActive(service.id, e)}
+                      aria-label={`Изменить статус услуги ${service.title}`}
                       style={{
                         padding: "6px 12px",
                         borderRadius: "6px",
@@ -433,7 +407,6 @@ const AdminMasters = () => {
                           ? "#2e7d32"
                           : "#c62828",
                         color: "#fff",
-                        zIndex: 2,
                       }}
                     >
                       {isServiceActive ? "Включена" : "Отключена"}
@@ -446,13 +419,7 @@ const AdminMasters = () => {
         </>
       ) : selectedServiceId === "gg_services" ? (
         <div className={scss.activePanel}>
-          <div
-            style={{
-              display: "flex",
-              justifyContent: "space-between",
-              alignItems: "center",
-            }}
-          >
+          <div className={scss.panelTopActions}>
             <button
               className={scss.backBtn}
               onClick={() => setSelectedServiceId(null)}
@@ -460,8 +427,8 @@ const AdminMasters = () => {
               ← Назад ко всем услугам
             </button>
 
-            {/* КНОПКА УПРАВЛЕНИЯ АКТИВНОСТЬЮ ВНУТРИ ПАНЕЛИ */}
             <button
+              type="button"
               onClick={() => toggleServiceActive("gg_services")}
               style={{
                 padding: "8px 16px",
@@ -482,24 +449,16 @@ const AdminMasters = () => {
             </button>
           </div>
 
-          <h3 className={scss.sectionTitle}>
+          <h1 className={scss.sectionTitle}>
             ⚙️ Настройка категории: <span>GG Услуги</span>
-          </h3>
+          </h1>
 
-          {/* ============ НОВОЕ: УПРАВЛЕНИЕ GG МАСТЕРАМИ ============ */}
-          <div
-            style={{
-              marginBottom: "40px",
-              padding: "20px",
-              background: "rgba(255,255,255,0.03)",
-              borderRadius: "12px",
-            }}
-          >
-            <h4 className={scss.ggCategoryTitle} style={{ marginTop: 0 }}>
+          <section className={scss.sectionBox}>
+            <h3 className={scss.ggCategoryTitle}>
               👥 Управление мастерами для GG услуг:
-            </h4>
+            </h3>
 
-            <div className={scss.mastersGrid} style={{ marginBottom: "20px" }}>
+            <div className={scss.mastersGrid}>
               {ggMastersList.length === 0 ? (
                 <p className={scss.emptyState}>
                   Ни одного GG-мастера еще не добавлено.
@@ -511,6 +470,7 @@ const AdminMasters = () => {
                       type="text"
                       className={scss.input}
                       placeholder="@username_tg"
+                      aria-label="Никнейм мастера"
                       value={master.nickname}
                       onChange={(e) =>
                         handleGgMasterEdit(idx, "nickname", e.target.value)
@@ -518,6 +478,7 @@ const AdminMasters = () => {
                     />
                     <select
                       className={scss.select}
+                      aria-label="Статус мастера"
                       value={master.status}
                       onChange={(e) =>
                         handleGgMasterEdit(idx, "status", e.target.value)
@@ -527,6 +488,7 @@ const AdminMasters = () => {
                       <option value="busy">Занят</option>
                     </select>
                     <button
+                      type="button"
                       className={scss.btnDelete}
                       onClick={() => handleGgMasterDelete(idx)}
                     >
@@ -537,16 +499,14 @@ const AdminMasters = () => {
               )}
             </div>
 
-            <div
-              className={scss.addMasterForm}
-              style={{ background: "none", padding: 0 }}
-            >
-              <h5>+ Добавить нового GG-мастера</h5>
+            <div className={scss.addMasterForm}>
+              <h4>+ Добавить нового GG-мастера</h4>
               <div className={scss.formFields}>
                 <input
                   type="text"
                   className={scss.input}
                   placeholder="Никнейм (например, @GG_Master)"
+                  aria-label="Никнейм нового GG мастера"
                   value={newMaster.nickname}
                   onChange={(e) =>
                     setNewMaster({ ...newMaster, nickname: e.target.value })
@@ -554,6 +514,7 @@ const AdminMasters = () => {
                 />
                 <select
                   className={scss.select}
+                  aria-label="Статус нового GG мастера"
                   value={newMaster.status}
                   onChange={(e) =>
                     setNewMaster({ ...newMaster, status: e.target.value })
@@ -571,108 +532,118 @@ const AdminMasters = () => {
                 Добавить в список
               </button>
             </div>
-          </div>
-          {/* ======================================================= */}
+          </section>
 
-          <hr
-            style={{
-              border: "1px solid rgba(255,255,255,0.1)",
-              marginBottom: "30px",
-            }}
-          />
+          <hr className={scss.divider} />
 
-          {/* НАСТРОЙКА ПРАЙСА */}
-          <h4 className={scss.ggCategoryTitle}>💰 Цены на авто:</h4>
-          <div className={scss.ggGrid}>
-            {Object.entries(ggServicesObj)
-              .filter(([_, item]) => item.cat === "cars")
-              .map(([key, item]) => (
-                <div
-                  key={key}
-                  className={`${scss.ggRow} ${!item.active ? scss.rowDisabled : ""}`}
-                >
-                  <div className={scss.ggName}>{item.title}</div>
-                  <div className={scss.ggFields}>
-                    <div className={scss.inputWrapper}>
-                      <input
-                        type="text"
-                        value={item.priceRub}
-                        onChange={(e) =>
-                          handleGgServiceEdit(key, "priceRub", e.target.value)
+          <section>
+            <h3 className={scss.ggCategoryTitle}>💰 Цены на авто:</h3>
+            <div className={scss.ggGrid}>
+              {Object.entries(ggServicesObj)
+                .filter(([_, item]) => item.cat === "cars")
+                .map(([key, item]) => (
+                  <div
+                    key={key}
+                    className={`${scss.ggRow} ${!item.active ? scss.rowDisabled : ""}`}
+                  >
+                    <div className={scss.ggName}>{item.title}</div>
+                    <div className={scss.ggFields}>
+                      <div className={scss.inputWrapper}>
+                        <input
+                          type="text"
+                          aria-label={`Цена в сомах для ${item.title}`}
+                          value={item.priceRub}
+                          onChange={(e) =>
+                            handleGgServiceEdit(key, "priceRub", e.target.value)
+                          }
+                        />
+                        <span>Сом</span>
+                      </div>
+                      <div className={scss.inputWrapper}>
+                        <input
+                          type="text"
+                          aria-label={`Цена в звездах для ${item.title}`}
+                          value={item.priceStars}
+                          onChange={(e) =>
+                            handleGgServiceEdit(
+                              key,
+                              "priceStars",
+                              e.target.value,
+                            )
+                          }
+                        />
+                        <span>★</span>
+                      </div>
+                      <button
+                        type="button"
+                        className={`${scss.btnToggleActive} ${item.active ? scss.activeOn : scss.activeOff}`}
+                        onClick={() =>
+                          handleGgServiceEdit(key, "active", !item.active)
                         }
-                      />
-                      <span>Сом</span>
+                      >
+                        {item.active ? "Вкл" : "Выкл"}
+                      </button>
                     </div>
-                    <div className={scss.inputWrapper}>
-                      <input
-                        type="text"
-                        value={item.priceStars}
-                        onChange={(e) =>
-                          handleGgServiceEdit(key, "priceStars", e.target.value)
-                        }
-                      />
-                      <span>★</span>
-                    </div>
-                    <button
-                      className={`${scss.btnToggleActive} ${item.active ? scss.activeOn : scss.activeOff}`}
-                      onClick={() =>
-                        handleGgServiceEdit(key, "active", !item.active)
-                      }
-                    >
-                      {item.active ? "Вкл" : "Выкл"}
-                    </button>
                   </div>
-                </div>
-              ))}
-          </div>
+                ))}
+            </div>
 
-          <h4 className={scss.ggCategoryTitle} style={{ marginTop: "30px" }}>
-            👨🏻‍🔧 Настройка авто / Улучшения:
-          </h4>
-          <div className={scss.ggGrid}>
-            {Object.entries(ggServicesObj)
-              .filter(([_, item]) => item.cat === "tuning")
-              .map(([key, item]) => (
-                <div
-                  key={key}
-                  className={`${scss.ggRow} ${!item.active ? scss.rowDisabled : ""}`}
-                >
-                  <div className={scss.ggName}>{item.title}</div>
-                  <div className={scss.ggFields}>
-                    <div className={scss.inputWrapper}>
-                      <input
-                        type="text"
-                        value={item.priceRub}
-                        onChange={(e) =>
-                          handleGgServiceEdit(key, "priceRub", e.target.value)
+            <h3 className={scss.ggCategoryTitle} style={{ marginTop: "30px" }}>
+              👨🏻‍🔧 Настройка авто / Улучшения:
+            </h3>
+            <div className={scss.ggGrid}>
+              {Object.entries(ggServicesObj)
+                .filter(([_, item]) => item.cat === "tuning")
+                .map(([key, item]) => (
+                  <div
+                    key={key}
+                    className={`${scss.ggRow} ${!item.active ? scss.rowDisabled : ""}`}
+                  >
+                    <div className={scss.ggName}>{item.title}</div>
+                    <div className={scss.ggFields}>
+                      <div className={scss.inputWrapper}>
+                        <input
+                          type="text"
+                          aria-label={`Цена в сомах для ${item.title}`}
+                          value={item.priceRub}
+                          onChange={(e) =>
+                            handleGgServiceEdit(key, "priceRub", e.target.value)
+                          }
+                        />
+                        <span>Сом</span>
+                      </div>
+                      <div className={scss.inputWrapper}>
+                        <input
+                          type="text"
+                          aria-label={`Цена в звездах для ${item.title}`}
+                          value={item.priceStars}
+                          onChange={(e) =>
+                            handleGgServiceEdit(
+                              key,
+                              "priceStars",
+                              e.target.value,
+                            )
+                          }
+                        />
+                        <span>★</span>
+                      </div>
+                      <button
+                        type="button"
+                        className={`${scss.btnToggleActive} ${item.active ? scss.activeOn : scss.activeOff}`}
+                        onClick={() =>
+                          handleGgServiceEdit(key, "active", !item.active)
                         }
-                      />
-                      <span>Сом</span>
+                      >
+                        {item.active ? "Вкл" : "Выкл"}
+                      </button>
                     </div>
-                    <div className={scss.inputWrapper}>
-                      <input
-                        type="text"
-                        value={item.priceStars}
-                        onChange={(e) =>
-                          handleGgServiceEdit(key, "priceStars", e.target.value)
-                        }
-                      />
-                      <span>★</span>
-                    </div>
-                    <button
-                      className={`${scss.btnToggleActive} ${item.active ? scss.activeOn : scss.activeOff}`}
-                      onClick={() =>
-                        handleGgServiceEdit(key, "active", !item.active)
-                      }
-                    >
-                      {item.active ? "Вкл" : "Выкл"}
-                    </button>
                   </div>
-                </div>
-              ))}
-          </div>
+                ))}
+            </div>
+          </section>
 
           <button
+            type="button"
             className={scss.btnSaveAll}
             style={{ marginTop: "40px" }}
             onClick={handleSaveToFirebase}
@@ -682,13 +653,7 @@ const AdminMasters = () => {
         </div>
       ) : (
         <div className={scss.activePanel}>
-          <div
-            style={{
-              display: "flex",
-              justifyContent: "space-between",
-              alignItems: "center",
-            }}
-          >
+          <div className={scss.panelTopActions}>
             <button
               className={scss.backBtn}
               onClick={() => setSelectedServiceId(null)}
@@ -696,8 +661,8 @@ const AdminMasters = () => {
               ← Вернуться к списку услуг
             </button>
 
-            {/* КНОПКА УПРАВЛЕНИЯ АКТИВНОСТЬЮ ВНУТРИ ПАНЕЛИ */}
             <button
+              type="button"
               onClick={() => toggleServiceActive(selectedServiceId)}
               style={{
                 padding: "8px 16px",
@@ -718,9 +683,9 @@ const AdminMasters = () => {
             </button>
           </div>
 
-          <h3 className={scss.sectionTitle}>
+          <h1 className={scss.sectionTitle}>
             Настройка услуги: <span>{activeServiceInfo?.title}</span>
-          </h3>
+          </h1>
 
           <div className={scss.mastersGrid}>
             {currentServiceData.masters?.length === 0 ? (
@@ -733,6 +698,7 @@ const AdminMasters = () => {
                   <input
                     type="text"
                     className={scss.input}
+                    aria-label="Никнейм мастера"
                     value={master.nickname}
                     onChange={(e) =>
                       handleLiveEdit(idx, "nickname", e.target.value)
@@ -740,6 +706,7 @@ const AdminMasters = () => {
                   />
                   <select
                     className={scss.select}
+                    aria-label="Статус мастера"
                     value={master.status}
                     onChange={(e) =>
                       handleLiveEdit(idx, "status", e.target.value)
@@ -749,6 +716,7 @@ const AdminMasters = () => {
                     <option value="busy">Занят</option>
                   </select>
                   <button
+                    type="button"
                     className={scss.btnDelete}
                     onClick={() => handleDeleteMaster(idx)}
                   >
@@ -760,12 +728,13 @@ const AdminMasters = () => {
           </div>
 
           <div className={scss.addMasterForm}>
-            <h5>+ Добавить нового мастера</h5>
+            <h4>+ Добавить нового мастера</h4>
             <div className={scss.formFields}>
               <input
                 type="text"
                 className={scss.input}
                 placeholder="Никнейм нового мастера"
+                aria-label="Никнейм нового мастера"
                 value={newMaster.nickname}
                 onChange={(e) =>
                   setNewMaster({ ...newMaster, nickname: e.target.value })
@@ -773,6 +742,7 @@ const AdminMasters = () => {
               />
               <select
                 className={scss.select}
+                aria-label="Статус нового мастера"
                 value={newMaster.status}
                 onChange={(e) =>
                   setNewMaster({ ...newMaster, status: e.target.value })
@@ -791,12 +761,16 @@ const AdminMasters = () => {
             </button>
           </div>
 
-          <button className={scss.btnSaveAll} onClick={handleSaveToFirebase}>
+          <button
+            type="button"
+            className={scss.btnSaveAll}
+            onClick={handleSaveToFirebase}
+          >
             Сохранить изменения мастеров на сервере
           </button>
         </div>
       )}
-    </div>
+    </main>
   );
 };
 

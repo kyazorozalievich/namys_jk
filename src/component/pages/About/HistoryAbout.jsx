@@ -5,8 +5,8 @@ const HistoryAbout = () => {
   return (
     <section className={scss.historySec}>
       <div className="container">
-        <div className={scss.nav}>
-          <h1>Через трудности — K Успеху</h1>
+        <article className={scss.nav}>
+          <h1>Через трудности — к успеху</h1>
           <p>
             Каждый клан проходит огонь и воду. Мы начинали как небольшая команда
             друзей <span>Mental RPM</span>, через расколы и предательства
@@ -19,7 +19,7 @@ const HistoryAbout = () => {
             Каждый раз поднимались сильнее. Сегодня — это семья, построенная на
             доверии, общем стиле и любви к авто.
           </p>
-        </div>
+        </article>
       </div>
     </section>
   );

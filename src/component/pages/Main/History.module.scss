@@ -1,11 +1,17 @@
 .historySec {
-  margin-block: 100px;
+  margin-block: 80px;
+
   .nav {
     display: flex;
     align-items: center;
     justify-content: center;
     flex-direction: column;
     gap: 20px;
+    width: 100%;
+    max-width: 1240px;
+    margin: 0 auto;
+    padding: 0 20px;
+
     h5 {
       font-size: 15px;
       display: flex;
@@ -13,43 +19,133 @@
       justify-content: center;
       gap: 10px;
       color: #b68a3d;
+      text-transform: uppercase;
+      letter-spacing: 1px;
     }
+
     h2 {
       font-size: 50px;
       letter-spacing: 5px;
       font-family: Verdana, Geneva, Tahoma, sans-serif;
+      text-align: center;
+      color: #222;
     }
+
     .historyTitles {
       display: flex;
-      align-items: start;
+      align-items: flex-start;
       flex-direction: column;
-      margin-top: 30px;
+      margin-top: 40px;
       gap: 40px;
+      width: 100%;
+      max-width: 800px; // Ограничиваем ширину для удобства чтения контента
+
       .texts {
         display: flex;
-        align-items: center;
-        justify-content: center;
-        gap: 20px;
+        align-items: flex-start;
+        gap: 25px;
+        width: 100%;
+
         span {
-          padding-inline: 15px;
-          padding-block: 5px;
+          padding: 6px 16px;
           border: 2px solid #b68a3d;
           border-radius: 50px;
-          letter-spacing: 3px;
+          letter-spacing: 2px;
           font-family: monospace;
           font-size: 20px;
+          font-weight: 700;
           color: #b68a3d;
+          flex-shrink: 0; // Защита кружка от сжатия при длинном тексте
+          display: flex;
+          align-items: center;
+          justify-content: center;
         }
+
         .name {
           display: flex;
-          align-items: start;
+          align-items: flex-start;
           flex-direction: column;
-          gap: 10px;
+          gap: 8px;
+
           h3 {
-            font-size: 25px;
+            font-size: 24px;
+            color: #222;
+            font-weight: 700;
           }
+
           p {
             font-weight: 500;
+            font-size: 16px;
+            color: #555;
+            line-height: 1.5;
+          }
+        }
+      }
+    }
+  }
+}
+
+// Адаптивная сетка под экраны разного калибра
+@media (max-width: 1024px) {
+  .historySec {
+    margin-block: 60px;
+
+    .nav {
+      h2 {
+        font-size: 40px;
+        letter-spacing: 4px;
+      }
+    }
+  }
+}
+
+@media (max-width: 650px) {
+  .historySec {
+    margin-block: 40px;
+
+    .nav {
+      h2 {
+        font-size: 32px;
+        letter-spacing: 3px;
+      }
+
+      .historyTitles {
+        margin-top: 30px;
+        gap: 35px;
+
+        .texts {
+          flex-direction: column; // Номер теперь над текстом, чтобы не зажимать контент
+          align-items: flex-start;
+          gap: 12px;
+
+          .name {
+            h3 {
+              font-size: 20px;
+            }
+            p {
+              font-size: 15px;
+            }
+          }
+        }
+      }
+    }
+  }
+}
+
+@media (max-width: 360px) {
+  .historySec {
+    .nav {
+      h2 {
+        font-size: 28px;
+        letter-spacing: 2px;
+      }
+
+      .historyTitles {
+        .texts {
+          .name {
+            h3 {
+              font-size: 18px;
+            }
           }
         }
       }

@@ -1,39 +1,44 @@
 import React from "react";
-import scss from './GalleryAbout.module.scss'
+import scss from "./GalleryAbout.module.scss";
 import { GrGallery } from "react-icons/gr";
+import cars from "../../../data/images/cars.jpg";
 
 const GalleryAbout = () => {
   const dataImgs = [
-    "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcShgp91qVoHroq_26c75L48xREYi86zBcV2XGdWC1nx-7fw9momRVxDPkWv&s=10",
-    "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcShgp91qVoHroq_26c75L48xREYi86zBcV2XGdWC1nx-7fw9momRVxDPkWv&s=10",
-    "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcShgp91qVoHroq_26c75L48xREYi86zBcV2XGdWC1nx-7fw9momRVxDPkWv&s=10",
-    "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcShgp91qVoHroq_26c75L48xREYi86zBcV2XGdWC1nx-7fw9momRVxDPkWv&s=10",
-    "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcShgp91qVoHroq_26c75L48xREYi86zBcV2XGdWC1nx-7fw9momRVxDPkWv&s=10",
-    "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcShgp91qVoHroq_26c75L48xREYi86zBcV2XGdWC1nx-7fw9momRVxDPkWv&s=10",
-    "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcShgp91qVoHroq_26c75L48xREYi86zBcV2XGdWC1nx-7fw9momRVxDPkWv&s=10",
-    "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcShgp91qVoHroq_26c75L48xREYi86zBcV2XGdWC1nx-7fw9momRVxDPkWv&s=10",
-    "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcShgp91qVoHroq_26c75L48xREYi86zBcV2XGdWC1nx-7fw9momRVxDPkWv&s=10",
-    "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcShgp91qVoHroq_26c75L48xREYi86zBcV2XGdWC1nx-7fw9momRVxDPkWv&s=10",
-    "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcShgp91qVoHroq_26c75L48xREYi86zBcV2XGdWC1nx-7fw9momRVxDPkWv&s=10",
-    "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcShgp91qVoHroq_26c75L48xREYi86zBcV2XGdWC1nx-7fw9momRVxDPkWv&s=10",
-    "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcShgp91qVoHroq_26c75L48xREYi86zBcV2XGdWC1nx-7fw9momRVxDPkWv&s=10",
-    "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcShgp91qVoHroq_26c75L48xREYi86zBcV2XGdWC1nx-7fw9momRVxDPkWv&s=10",
-    "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcShgp91qVoHroq_26c75L48xREYi86zBcV2XGdWC1nx-7fw9momRVxDPkWv&s=10",
+    cars,
+    cars,
+    cars,
+    cars,
+    cars,
+    cars,
+    cars,
+    cars,
+    cars,
+    cars,
+    cars,
+    cars,
+    cars,
+    cars,
+    cars,
   ];
+
   return (
     <section className={scss.gallerySec}>
       <div className="container">
         <div className={scss.nav}>
           <h2>
             <span>
-
-            <GrGallery />
+              <GrGallery />
             </span>
             Моменты
           </h2>
           <div className={scss.galleryImgs}>
             {dataImgs.map((el, id) => (
-              <img src={el} alt="" />
+              <img
+                key={id}
+                src={el}
+                alt={`Фото галереи автоклана Namys JK - ${id + 1}`}
+              />
             ))}
           </div>
         </div>

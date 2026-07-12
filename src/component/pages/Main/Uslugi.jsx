@@ -4,43 +4,40 @@ import { db } from "../../../firebase/FireBase";
 import { collection, onSnapshot } from "firebase/firestore";
 import scss from "./Uslugi.module.scss";
 import { BsStars } from "react-icons/bs";
+import nomUsluga from "../../../data/images/number_usluga.png";
+import ggUsluga from "../../../data/images/gg_usluga.png";
+import logoUsluga from "../../../data/images/logo_usluga.png";
 
 const USLUGI_BASE = [
   {
     id: "plates",
     title: "Изготовление гос номеров",
     path: "/detailing/plates",
-    icon: "🆔",
+    icon: nomUsluga,
   },
   {
     id: "gg_services",
     title: "Всем известные GG услуги",
     path: "/detailing/gg",
-    icon: "✨",
+    icon: ggUsluga,
   },
   {
     id: "badges",
     title: "Шильдики и таблички на любую машину",
     path: "/detailing/badges",
-    icon: "🚘",
+    icon: logoUsluga,
   },
-  // {
-  //   id: "market",
-  //   title: "Продажа авто и аккаунтов",
-  //   path: "/shop/car",
-  //   icon: "💰",
-  // },
   {
     id: "branding",
     title: "Логотипы и брендинг кланов",
     path: "/detailing/branding",
-    icon: "🛡️",
+    icon: logoUsluga,
   },
   {
     id: "montage",
     title: "Фото- и видеомонтажи тачек",
     path: "/detailing/montage",
-    icon: "🎬",
+    icon: logoUsluga,
   },
 ];
 
@@ -100,11 +97,10 @@ const Uslugi = () => {
               const isActive = servicesStatus[service.id] !== false;
 
               return (
-                <div
+                <article
                   key={service.id}
                   className={`${scss.usCard} ${!isActive ? scss.disabled : ""}`}
                   onClick={() => handleCardClick(service.path, service.id)}
-                  style={{ cursor: isActive ? "pointer" : "not-allowed" }}
                 >
                   {!isActive && (
                     <div className={scss.overlayDisabled}>
@@ -113,18 +109,20 @@ const Uslugi = () => {
                   )}
 
                   <div className={scss.cardContent}>
-                    {/* Блок с иконкой-смайликом */}
-                    <div className={scss.iconBlock}>{service.icon}</div>
+                    <img
+                      src={service.icon}
+                      alt={`Иконка услуги: ${service.title}`}
+                      className={scss.iconBlock}
+                    />
                     <h3>{service.title}</h3>
                   </div>
 
-                  {/* Кнопка действия видна только у активных карточек */}
                   {isActive && (
-                    <button className={scss.orderButton}>
+                    <button className={scss.orderButton} type="button">
                       Заказать услугу
                     </button>
                   )}
-                </div>
+                </article>
               );
             })}
           </div>
