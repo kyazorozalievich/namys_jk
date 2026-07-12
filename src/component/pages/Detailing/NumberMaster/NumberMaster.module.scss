@@ -183,6 +183,7 @@
 .plateBody {
   display: flex;
   justify-content: center;
+  align-items: center;
   padding: 20px 0;
   overflow: visible;
 
@@ -213,6 +214,7 @@
   position: relative;
   user-select: none;
   flex-shrink: 0;
+  box-sizing: border-box;
 }
 
 .kgPlate {
@@ -321,7 +323,7 @@
 .kzPlate {
   display: flex;
   align-items: center;
-  justify-open: space-between;
+  justify-content: space-between;
 
   .leftSide {
     display: flex;
@@ -338,6 +340,7 @@
       font-size: 22px;
       letter-spacing: 2px;
       font-family: "Franklin Gothic Medium", "Arial Narrow", Arial, sans-serif;
+      line-height: 1;
     }
   }
   .centerSide {
@@ -349,6 +352,10 @@
 
     .mainText {
       letter-spacing: 2px;
+      line-height: 1;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
     }
   }
   .rightSide {
@@ -362,6 +369,10 @@
     .regNum {
       font-size: 70px;
       font-family: "RoadNumbers";
+      line-height: 1;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
     }
   }
 }
@@ -369,6 +380,7 @@
 .ruPlate {
   display: flex;
   justify-content: space-between;
+  align-items: center;
 
   .mainText {
     display: flex;
@@ -380,6 +392,10 @@
 
     span {
       letter-spacing: 3px;
+      line-height: 1;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
     }
   }
 
@@ -397,11 +413,19 @@
       font-family: "RoadNumbers";
       font-size: 50px;
       letter-spacing: 2px;
+      line-height: 1;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
     }
     .regNumThree {
       font-family: "RoadNumbers";
       font-size: 40px;
       letter-spacing: 2px;
+      line-height: 1;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
     }
     .ruFlagBlock {
       display: flex;
@@ -411,6 +435,7 @@
 
       span {
         font-size: 15px;
+        line-height: 1;
       }
       img {
         width: 25px;
@@ -548,6 +573,7 @@
   user-select: none;
   overflow: hidden;
   flex-shrink: 0;
+  box-sizing: border-box;
 }
 
 .kgPlateSquare {
@@ -665,6 +691,7 @@
         font-family:
           "Franklin Gothic Medium", "Arial Narrow", Arial, sans-serif;
         letter-spacing: 2px;
+        line-height: 1;
       }
     }
     .regionBox {
@@ -680,6 +707,10 @@
       .regNum {
         font-size: 70px;
         font-family: "RoadNumbers";
+        line-height: 1;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
       }
     }
   }
@@ -698,6 +729,7 @@
       justify-content: center;
       letter-spacing: 5px;
       height: 50%;
+      line-height: 1;
     }
     .lettersBox {
       height: 50%;
@@ -705,6 +737,7 @@
       align-items: center;
       justify-content: center;
       letter-spacing: 2px;
+      line-height: 1;
     }
   }
 }
@@ -722,6 +755,10 @@
 
     span {
       letter-spacing: 2px;
+      line-height: 1;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
     }
   }
 
@@ -737,6 +774,10 @@
       align-items: center;
       justify-content: center;
       letter-spacing: 2px;
+      line-height: 1;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
     }
 
     .regFlagBlock {
@@ -754,11 +795,19 @@
         font-family: "RoadNumbers";
         font-size: 60px;
         letter-spacing: 2px;
+        line-height: 1;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
       }
       .regNumThreeSquare {
         font-family: "RoadNumbers";
         font-size: 50px;
         letter-spacing: 2px;
+        line-height: 1;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
       }
       .ruFlagBlock {
         display: flex;
@@ -768,6 +817,7 @@
         span {
           font-size: 18px;
           font-weight: 700;
+          line-height: 1;
         }
         img {
           width: 30px;

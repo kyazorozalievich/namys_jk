@@ -6,16 +6,23 @@
   background-size: cover;
   display: flex;
   flex-direction: column;
+  position: relative;
+  isolation: isolate;
 
   .bg {
     padding-top: 100px;
     width: 100%;
     min-height: 70vh;
-    background: rgba(124, 123, 123, 0.185);
-    backdrop-filter: blur(15px);
-    -webkit-backdrop-filter: blur(15px);
     display: flex;
     align-items: center;
+
+    position: relative;
+    z-index: 1;
+    will-change: backdrop-filter;
+
+    background: rgba(124, 123, 123, 0.185);
+    -webkit-backdrop-filter: blur(15px);
+    backdrop-filter: blur(15px);
 
     .nav {
       height: 60vh;
