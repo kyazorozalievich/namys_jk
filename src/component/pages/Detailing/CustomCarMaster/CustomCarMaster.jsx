@@ -2,8 +2,8 @@ import React, { useState } from "react";
 import scss from "./CustomCarMaster.module.scss";
 
 const TG_BOT_TOKEN = "8735673140:AAHT5xSLgnazXY56Q_miz-_XWilPnOL2ydQ";
-const TG_CHAT_ID = "-1004353082934";
-const TG_GROUP_LINK = "https://t.me/detailing_namysjk";
+const TG_CHAT_ID = "-1004408094505";
+const TG_GROUP_LINK = "https://t.me/detailings_namysjk";
 
 const COUNTRIES_DATA = {
   "🇩🇪 Германия": [

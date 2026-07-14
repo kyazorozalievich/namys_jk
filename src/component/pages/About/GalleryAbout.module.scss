@@ -64,10 +64,11 @@
       .galleryImgs {
         display: flex;
         justify-content: flex-start;
-        flex-wrap: nowrap;
-        overflow-x: auto;
+        flex-wrap: wrap;
+        overflow-y: auto;
         scroll-behavior: smooth;
         -webkit-overflow-scrolling: touch;
+        height: 300px;
         padding-bottom: 15px; // Место для красивого зазора снизу
         padding-inline: 5px;
 
@@ -80,7 +81,7 @@
         scrollbar-width: none;
 
         img {
-          flex: 0 0 240px; // Задаем фиксированную ширину карточки в скролле
+          flex: 0 0 100px; // Задаем фиксированную ширину карточки в скролле
           height: 130px;
         }
       }
@@ -99,8 +100,9 @@
       .galleryImgs {
         gap: 12px;
         img {
-          flex: 0 0 200px;
+          flex: 0 0 180px;
           height: 120px;
+          border-radius: 5px;
         }
       }
     }
@@ -117,9 +119,10 @@
         font-size: 22px;
       }
       .galleryImgs {
+        justify-content: space-between;
         img {
-          flex: 0 0 170px;
-          height: 100px;
+          flex: 0 0 150px;
+          height: 80px;
         }
       }
     }

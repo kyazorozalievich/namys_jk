@@ -612,6 +612,7 @@ const NumberMaster = () => {
       });
     }
   };
+  
   return (
     <div className={scss.platePage}>
       <div className={scss.container}>

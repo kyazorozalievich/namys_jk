@@ -2,6 +2,8 @@ import React from "react";
 import scss from "./GalleryAbout.module.scss";
 import { GrGallery } from "react-icons/gr";
 import cars from "../../../data/images/cars.jpg";
+import Zoom from "react-medium-image-zoom";
+import "react-medium-image-zoom/dist/styles.css";
 
 const GalleryAbout = () => {
   const dataImgs = [
@@ -34,11 +36,13 @@ const GalleryAbout = () => {
           </h2>
           <div className={scss.galleryImgs}>
             {dataImgs.map((el, id) => (
-              <img
-                key={id}
-                src={el}
-                alt={`Фото галереи автоклана Namys JK - ${id + 1}`}
-              />
+              <Zoom>
+                <img
+                  key={id}
+                  src={el}
+                  alt={`Фото галереи автоклана Namys JK - ${id + 1}`}
+                />
+              </Zoom>
             ))}
           </div>
         </div>

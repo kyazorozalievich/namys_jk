@@ -288,7 +288,6 @@ $border-color: #ececec;
   display: flex;
   gap: 15px;
   button {
-    flex: 1;
     height: 50px;
     border: none;
     border-radius: 12px;
@@ -370,7 +369,7 @@ $border-color: #ececec;
 
 @media (max-width: 768px) {
   .profilePage {
-    padding: 30px 15px;
+    padding: 80px 15px;
   }
   .mainCard {
     padding: 20px;

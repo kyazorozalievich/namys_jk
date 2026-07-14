@@ -4,8 +4,8 @@ import { doc, onSnapshot } from "firebase/firestore";
 import scss from "./GGMaster.module.scss";
 
 const TG_BOT_TOKEN = "8735673140:AAHT5xSLgnazXY56Q_miz-_XWilPnOL2ydQ";
-const TG_CHAT_ID = "-1004264787911";
-const TG_GROUP_LINK = "https://t.me/gg_namysjk";
+const TG_CHAT_ID = "-1004468439984";
+const TG_GROUP_LINK = "https://t.me/gguslugi_namysjk";
 
 const INITIAL_GG_SERVICES = {
   coin_car: {
@@ -51,7 +51,6 @@ const GGMaster = () => {
   const handleTelegramRedirect = async () => {
     setIsSending(true);
 
-    // Используем HTML теги: <b> (жирный), <i> (курсив) или <a> (ссылки)
     const message = `🔔 <b>Новый клиент!</b>\nКто-то нажал кнопку "Связаться с GG мастерами" на сайте и переходит в группу за услугами.\n<b>Будьте готовы!</b>\nМастера: @opium_sky / @KAKE_DDS`;
 
     try {
@@ -61,7 +60,7 @@ const GGMaster = () => {
         body: JSON.stringify({
           chat_id: TG_CHAT_ID,
           text: message,
-          parse_mode: "HTML", // Изменено на HTML
+          parse_mode: "HTML", 
         }),
       });
     } catch (error) {

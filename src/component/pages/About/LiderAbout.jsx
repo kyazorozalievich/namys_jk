@@ -49,7 +49,7 @@ const LiderAbout = () => {
                   loading="lazy"
                 />
                 <h3>{el.nickname}</h3>
-                <div className={scss.id}>ID: {el.id}</div>
+                <div className={scss.id}>ID: {el.tag}</div>
                 <div className={scss.gosNom}>{el.gosNom}</div>
               </article>
             ))}

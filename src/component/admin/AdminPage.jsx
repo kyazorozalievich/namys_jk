@@ -7,6 +7,7 @@ import {
   updateDoc,
   deleteDoc,
   addDoc,
+  getDoc,
   getDocs,
   query,
 } from "firebase/firestore";
@@ -68,10 +69,6 @@ const AdminPage = () => {
   }, [loadingUsers]);
 
   useEffect(() => {
-    // NOTE: spread doc.data() FIRST, then set id: doc.id LAST.
-    // This guarantees the real Firestore document ID always wins,
-    // even if a document happens to contain its own "id" field
-    // (which clan_leaders documents do, via memberForm.idField).
     const unsubLeaders = onSnapshot(
       collection(db, "clan_leaders"),
       (snapshot) => {
@@ -108,8 +105,6 @@ const AdminPage = () => {
         await addDoc(collection(db, "clan_leaders"), {
           nickname: memberForm.name,
           desc: memberForm.desc || "Hellloooo",
-          // Renamed from "id" to "tag" so it can never collide with
-          // the Firestore document id when we read the data back.
           tag: memberForm.idField || "ID00",
           gosNom: memberForm.gosNom,
           profile: finalProfileImage,
@@ -179,15 +174,17 @@ const AdminPage = () => {
   const handleDeleteCar = async (car) => {
     try {
       await deleteDoc(doc(db, "cars", car.id));
-      if (car.authorId) {
-        const userRef = doc(db, "users", car.authorId);
-        const userSnap = await getDocs(query(collection(db, "users")));
-        const targetUser = userSnap.docs.find((d) => d.id === car.authorId);
-        if (targetUser) {
-          const currentAds = targetUser.data().adsUsed || 0;
+
+      if (car.authorUid) {
+        const userRef = doc(db, "users", car.authorUid);
+        const userSnap = await getDoc(userRef);
+
+        if (userSnap.exists()) {
+          const currentAds = userSnap.data().adsUsed || 0;
           await updateDoc(userRef, { adsUsed: Math.max(0, currentAds - 1) });
         }
       }
+
       toast.warning("Объявление удалено, лимит возвращен пользователю");
     } catch (e) {
       console.error(e);
@@ -253,7 +250,7 @@ const AdminPage = () => {
       if (user.id) {
         const qById = query(carsRef);
         const res = await getDocs(qById);
-        snapshot = res.docs.filter((d) => d.data().authorId === user.id);
+        snapshot = res.docs.filter((d) => d.data().authorUid === user.id);
       }
 
       if ((!snapshot || snapshot.length === 0) && user.email) {
@@ -295,14 +292,24 @@ const AdminPage = () => {
     return true;
   });
 
-  const filteredUsers = users.filter((user) => {
-    if (usersSearchQuery.trim() !== "") {
-      const email = (user.email || "").toLowerCase();
-      const search = usersSearchQuery.toLowerCase().trim();
-      return email.includes(search);
-    }
-    return true;
-  });
+  const getUserPriority = (user) => {
+    if (user.isBanned) return 3;
+    if (user.plan === "vip") return 0;
+    if ((user.adsLimit || 10) >= 10 && user.marketStatus !== "restricted")
+      return 1;
+    return 2;
+  };
+
+  const filteredUsers = users
+    .filter((user) => {
+      if (usersSearchQuery.trim() !== "") {
+        const email = (user.email || "").toLowerCase();
+        const search = usersSearchQuery.toLowerCase().trim();
+        return email.includes(search);
+      }
+      return true;
+    })
+    .sort((a, b) => getUserPriority(a) - getUserPriority(b));
 
   if (loadingCars || loadingUsers || loadingClan) {
     return (
@@ -518,18 +525,6 @@ const AdminPage = () => {
                           )}
                         </div>
                       </td>
-                      {/* <td>
-                        <div className={scss.actions}>
-                          <button
-                            className={scss.btnRoleToggle}
-                            onClick={() => handleUpdateRole(user.id, user.role)}
-                          >
-                            {user.role === "admin"
-                              ? "👑 Администратор"
-                              : "Пользователь"}
-                          </button>
-                        </div>
-                      </td> */}
                       <td>
                         <button
                           type="button"
@@ -551,7 +546,7 @@ const AdminPage = () => {
                       <td>
                         <select
                           className={scss.statusSelect}
-                          value={user.marketStatus || "active"}
+                          value={user.marketStatus || "restricted"}
                           onChange={(e) =>
                             handleUpdateMarketStatus(user.id, e.target.value)
                           }
