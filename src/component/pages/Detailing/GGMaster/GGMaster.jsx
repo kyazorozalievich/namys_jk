@@ -50,7 +50,9 @@ const GGMaster = () => {
 
   const handleTelegramRedirect = async () => {
     setIsSending(true);
-    const message = `🔔 **Новый клиент!**\nКто-то нажал кнопку "Связаться с GG мастерами" на сайте и переходит в группу за услугами.**\nБудьте готовы!**\nМастера: @opium_sky / @KAKE_DDS`;
+
+    // Используем HTML теги: <b> (жирный), <i> (курсив) или <a> (ссылки)
+    const message = `🔔 <b>Новый клиент!</b>\nКто-то нажал кнопку "Связаться с GG мастерами" на сайте и переходит в группу за услугами.\n<b>Будьте готовы!</b>\nМастера: @opium_sky / @KAKE_DDS`;
 
     try {
       await fetch(`https://api.telegram.org/bot${TG_BOT_TOKEN}/sendMessage`, {
@@ -59,7 +61,7 @@ const GGMaster = () => {
         body: JSON.stringify({
           chat_id: TG_CHAT_ID,
           text: message,
-          parse_mode: "Markdown",
+          parse_mode: "HTML", // Изменено на HTML
         }),
       });
     } catch (error) {

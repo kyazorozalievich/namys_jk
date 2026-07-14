@@ -58,7 +58,7 @@ const PRICE_CONFIG = {
     },
     named: {
       BASE_PRICE: 0,
-      BASE_PRICE_DISCOUNT_7: 0, // Скидка на базовую цену, если букв ровно 7
+      BASE_PRICE_DISCOUNT_7: 0,
       CURRENCY: "сом",
       LETTERS: {
         A: 30,
@@ -115,7 +115,7 @@ const PRICE_CONFIG = {
         X: 25,
         Y: 35,
         Z: 25,
-      }, // Цены на конкретные буквы при 7 символах
+      },
     },
     old: {
       BASE_PRICE: 0,
@@ -367,6 +367,7 @@ const NumberMaster = () => {
         key={index}
         style={{
           display: "inline-block",
+          lineHeight: 1,
           fontFamily: roadLetters.has(char)
             ? "RoadNumbers"
             : "Franklin Gothic Medium, Arial Narrow, Arial, sans-serif",
@@ -376,6 +377,7 @@ const NumberMaster = () => {
               ? "80px"
               : "59px",
           transform: roadLetters.has(char) ? "scaleX(1)" : "scaleX(0.88)",
+          marginTop: roadLetters.has(char) ? "0px" : "9px",
         }}
       >
         {char}
@@ -389,6 +391,7 @@ const NumberMaster = () => {
         key={index}
         style={{
           display: "inline-block",
+          lineHeight: 1,
           fontFamily: roadLetters.has(char)
             ? "RoadNumbers"
             : "Franklin Gothic Medium, Arial Narrow, Arial, sans-serif",
@@ -398,7 +401,7 @@ const NumberMaster = () => {
               ? "95px"
               : "73px",
           transform: roadLetters.has(char) ? "scaleX(1)" : "scaleX(0.88)",
-          marginTop: roadLetters.has(char) ? "" : "10px",
+          marginTop: roadLetters.has(char) ? "0px" : "10px",
         }}
       >
         {char}
@@ -412,6 +415,7 @@ const NumberMaster = () => {
         key={index}
         style={{
           display: "inline-block",
+          lineHeight: 1,
           fontFamily: roadLetters.has(char)
             ? "RoadNumbers"
             : "Franklin Gothic Medium, Arial Narrow, Arial, sans-serif",
@@ -431,6 +435,7 @@ const NumberMaster = () => {
         key={index}
         style={{
           display: "inline-block",
+          lineHeight: 1,
           fontFamily: roadLetters.has(char)
             ? "RoadNumbers"
             : "Franklin Gothic Medium, Arial Narrow, Arial, sans-serif",
@@ -440,7 +445,7 @@ const NumberMaster = () => {
               ? "115px"
               : "85px",
           transform: roadLetters.has(char) ? "scaleX(1)" : "scaleX(0.88)",
-          marginTop: roadLetters.has(char) ? "-15px" : "",
+          marginTop: roadLetters.has(char) ? "-15px" : "0px",
         }}
       >
         {char}

@@ -35,9 +35,9 @@ const MarketAccessModal = ({ open, onClose }) => {
           <section className={scss.block}>
             <h3>🔑 Обычный доступ</h3>
             <ul>
-              <li>✔ До 10 active объявлений</li>
+              <li>✔ До 10 мест объявлений</li>
               <li>✔ Размещение автомобилей</li>
-              <li>✔ Просмотр покупателей</li>
+              <li>✔ Удачная продажа</li>
               <li>✔ Поддержка администрации</li>
             </ul>
           </section>
@@ -45,7 +45,7 @@ const MarketAccessModal = ({ open, onClose }) => {
           <section className={scss.vip}>
             <div className={scss.vipTitle}>⭐ VIP доступ</div>
             <ul>
-              <li>✔ До 20 объявлений</li>
+              <li>✔ До 20 мест объявлений</li>
               <li>✔ VIP карточка автомобиля</li>
               <li>✔ Золотая рамка</li>
               <li>✔ Выше обычных объявлений</li>
