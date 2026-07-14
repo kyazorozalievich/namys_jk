@@ -100,7 +100,7 @@
       .galleryImgs {
         gap: 12px;
         img {
-          flex: 0 0 180px;
+          width: 100px;
           height: 120px;
           border-radius: 5px;
         }
@@ -140,3 +140,5 @@
     }
   }
 }
+
+
