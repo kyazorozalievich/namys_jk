@@ -68,11 +68,15 @@ const AdminPage = () => {
   }, [loadingUsers]);
 
   useEffect(() => {
+    // NOTE: spread doc.data() FIRST, then set id: doc.id LAST.
+    // This guarantees the real Firestore document ID always wins,
+    // even if a document happens to contain its own "id" field
+    // (which clan_leaders documents do, via memberForm.idField).
     const unsubLeaders = onSnapshot(
       collection(db, "clan_leaders"),
       (snapshot) => {
         const data = [];
-        snapshot.forEach((doc) => data.push({ id: doc.id, ...doc.data() }));
+        snapshot.forEach((doc) => data.push({ ...doc.data(), id: doc.id }));
         setClanLeaders(data);
       },
     );
@@ -81,7 +85,7 @@ const AdminPage = () => {
       collection(db, "clan_members"),
       (snapshot) => {
         const data = [];
-        snapshot.forEach((doc) => data.push({ id: doc.id, ...doc.data() }));
+        snapshot.forEach((doc) => data.push({ ...doc.data(), id: doc.id }));
         setClanMembers(data);
         if (loadingClan) setLoadingClan(false);
       },
@@ -104,7 +108,9 @@ const AdminPage = () => {
         await addDoc(collection(db, "clan_leaders"), {
           nickname: memberForm.name,
           desc: memberForm.desc || "Hellloooo",
-          id: memberForm.idField || "ID00",
+          // Renamed from "id" to "tag" so it can never collide with
+          // the Firestore document id when we read the data back.
+          tag: memberForm.idField || "ID00",
           gosNom: memberForm.gosNom,
           profile: finalProfileImage,
         });
@@ -734,7 +740,7 @@ const AdminPage = () => {
                   {clanLeaders.map((l) => (
                     <tr key={l.id}>
                       <td>{l.nickname || l.name}</td>
-                      <td>{l.id}</td>
+                      <td>{l.tag}</td>
                       <td>{l.gosNom}</td>
                       <td>
                         <button
