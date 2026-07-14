@@ -121,7 +121,8 @@
       .galleryImgs {
         justify-content: space-between;
         img {
-          flex: 0 0 150px;
+          width: 100px;
+
           height: 80px;
         }
       }
@@ -134,11 +135,9 @@
     .nav {
       .galleryImgs {
         img {
-          flex: 0 0 150px;
+          width: 100px;
         }
       }
     }
   }
 }
-
-
