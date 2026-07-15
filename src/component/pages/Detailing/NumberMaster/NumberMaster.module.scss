@@ -341,9 +341,10 @@
       width: 45px;
     }
     span {
-      font-size: 22px;
+      font-size: 20px;
+      font-weight: 600;
       letter-spacing: 2px;
-      font-family: "KekaFont";
+      font-family: sans-serif;
       line-height: 1;
     }
   }
@@ -357,9 +358,15 @@
     .mainText {
       letter-spacing: 2px;
       line-height: 1;
-      display: inline-flex;
+      font-size: 80px;
+      padding-bottom: 60px;
+      display: flex;
       align-items: center;
       justify-content: center;
+      letter-spacing: 3px;
+      .cm {
+        width: 10px;
+      }
     }
   }
   .rightSide {
@@ -371,12 +378,13 @@
     width: 70px;
 
     .regNum {
-      font-size: 70px;
+      font-size: 80px;
       font-family: "KekaFont";
       line-height: 1;
       display: inline-flex;
       align-items: center;
       justify-content: center;
+      padding-bottom: 60px;
     }
   }
 }
@@ -395,9 +403,11 @@
     gap: 10px;
 
     span {
-      letter-spacing: 3px;
+      letter-spacing: 2px;
       line-height: 1;
-      display: inline-flex;
+      font-size: 80px;
+      padding-bottom: 30px;
+      display: flex;
       align-items: center;
       justify-content: center;
     }
@@ -411,7 +421,7 @@
     border-left: 3px solid #111;
     height: 100%;
     width: 120px;
-    gap: 5px;
+    gap: 15px;
 
     .regNum {
       font-family: "KekaFont";
@@ -421,6 +431,7 @@
       display: inline-flex;
       align-items: center;
       justify-content: center;
+      margin-top: -20px;
     }
     .regNumThree {
       font-family: "KekaFont";
@@ -691,8 +702,9 @@
       }
       span {
         margin-top: -5px;
-        font-size: 30px;
-        font-family: "KekaFont";
+        font-size: 25px;
+        font-weight: 600;
+        font-family: sans-serif;
         letter-spacing: 2px;
         line-height: 1;
       }
@@ -714,6 +726,7 @@
         display: inline-flex;
         align-items: center;
         justify-content: center;
+        padding-bottom: 50px;
       }
     }
   }
@@ -728,19 +741,25 @@
 
     .digitsBox {
       display: flex;
-      align-items: center;
+      align-items: end;
       justify-content: center;
       letter-spacing: 5px;
       height: 50%;
       line-height: 1;
+      font-size: 90px;
+      padding-bottom: 30px;
+      // background: red;
     }
     .lettersBox {
       height: 50%;
       display: flex;
-      align-items: center;
+      align-items: end;
       justify-content: center;
       letter-spacing: 2px;
       line-height: 1;
+      font-size: 90px;
+      padding-bottom: 30px;
+      // background: yellow;
     }
   }
 }
@@ -757,11 +776,13 @@
     gap: 15px;
 
     span {
-      letter-spacing: 2px;
+      letter-spacing: 3px;
       line-height: 1;
       display: inline-flex;
       align-items: center;
       justify-content: center;
+      font-size: 90px;
+      padding-bottom: 35px;
     }
   }
 
@@ -776,11 +797,14 @@
       display: flex;
       align-items: center;
       justify-content: center;
-      letter-spacing: 2px;
+      letter-spacing: 3px;
       line-height: 1;
       display: inline-flex;
       align-items: center;
       justify-content: center;
+      font-size: 90px;
+
+      padding-bottom: 70px;
     }
 
     .regFlagBlock {
@@ -802,6 +826,7 @@
         display: inline-flex;
         align-items: center;
         justify-content: center;
+        margin-top: -30px;
       }
       .regNumThreeSquare {
         font-family: "KekaFont";
@@ -811,12 +836,13 @@
         display: inline-flex;
         align-items: center;
         justify-content: center;
+        margin-top: -20px;
       }
       .ruFlagBlock {
         display: flex;
         align-items: center;
         gap: 5px;
-
+        margin-top: 20px;
         span {
           font-size: 18px;
           font-weight: 700;

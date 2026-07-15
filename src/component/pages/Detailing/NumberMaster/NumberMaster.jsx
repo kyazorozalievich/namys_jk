@@ -343,10 +343,8 @@ const NumberMaster = () => {
       <span
         key={index}
         style={{
-          display: "inline-block",
           lineHeight: 1,
           fontFamily: "KekaFont",
-          fontSize: customSize ? customSize : "70px",
         }}
       >
         {char}
@@ -359,10 +357,8 @@ const NumberMaster = () => {
       <span
         key={index}
         style={{
-          display: "inline-block",
           lineHeight: 1,
           fontFamily: "KekaFont",
-          fontSize: customSize ? customSize : "85px",
         }}
       >
         {char}
@@ -375,10 +371,8 @@ const NumberMaster = () => {
       <span
         key={index}
         style={{
-          display: "inline-block",
           lineHeight: 1,
           fontFamily: "KekaFont",
-          fontSize: "70px",
         }}
       >
         {char}
@@ -391,10 +385,8 @@ const NumberMaster = () => {
       <span
         key={index}
         style={{
-          display: "inline-block",
           lineHeight: 1,
           fontFamily: "KekaFont",
-          fontSize: customSize ? customSize : "100px",
         }}
       >
         {char}
@@ -933,7 +925,7 @@ const NumberMaster = () => {
                   </div>
                   <div className={scss.centerSide}>
                     <span className={scss.mainText}>
-                      {renderKzLetters(digits || "000")}{" "}
+                      {renderKzLetters(digits || "000")} <span className={scss.cm}></span>
                       {renderKzLetters(letters || "AAA")}
                     </span>
                   </div>
