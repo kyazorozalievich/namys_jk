@@ -10,6 +10,10 @@
   font-family: "RoadNumbers";
   src: url("../../../../../public/RoadNumbers.ttf") format("truetype");
 }
+@font-face {
+  font-family: "KekaFont";
+  src: url("../../../../../public/KekaFont.ttf") format("truetype");
+}
 
 .platePage {
   min-height: 100vh;
@@ -339,7 +343,7 @@
     span {
       font-size: 22px;
       letter-spacing: 2px;
-      font-family: "Franklin Gothic Medium", "Arial Narrow", Arial, sans-serif;
+      font-family: "KekaFont";
       line-height: 1;
     }
   }
@@ -368,7 +372,7 @@
 
     .regNum {
       font-size: 70px;
-      font-family: "RoadNumbers";
+      font-family: "KekaFont";
       line-height: 1;
       display: inline-flex;
       align-items: center;
@@ -410,7 +414,7 @@
     gap: 5px;
 
     .regNum {
-      font-family: "RoadNumbers";
+      font-family: "KekaFont";
       font-size: 50px;
       letter-spacing: 2px;
       line-height: 1;
@@ -419,7 +423,7 @@
       justify-content: center;
     }
     .regNumThree {
-      font-family: "RoadNumbers";
+      font-family: "KekaFont";
       font-size: 40px;
       letter-spacing: 2px;
       line-height: 1;
@@ -688,8 +692,7 @@
       span {
         margin-top: -5px;
         font-size: 30px;
-        font-family:
-          "Franklin Gothic Medium", "Arial Narrow", Arial, sans-serif;
+        font-family: "KekaFont";
         letter-spacing: 2px;
         line-height: 1;
       }
@@ -706,7 +709,7 @@
 
       .regNum {
         font-size: 70px;
-        font-family: "RoadNumbers";
+        font-family: "KekaFont";
         line-height: 1;
         display: inline-flex;
         align-items: center;
@@ -792,7 +795,7 @@
       border-top-left-radius: 10px;
 
       .regNumSquare {
-        font-family: "RoadNumbers";
+        font-family: "KekaFont";
         font-size: 60px;
         letter-spacing: 2px;
         line-height: 1;
@@ -801,7 +804,7 @@
         justify-content: center;
       }
       .regNumThreeSquare {
-        font-family: "RoadNumbers";
+        font-family: "KekaFont";
         font-size: 50px;
         letter-spacing: 2px;
         line-height: 1;

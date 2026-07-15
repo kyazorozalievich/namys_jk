@@ -335,31 +335,8 @@ const NumberMaster = () => {
     if (val.length <= 7) setNamedText(val);
   };
 
-  const roadLetters = new Set([
-    "A",
-    "B",
-    "C",
-    "D",
-    "E",
-    "H",
-    "K",
-    "M",
-    "O",
-    "P",
-    "T",
-    "X",
-    "Y",
-    "0",
-    "1",
-    "2",
-    "3",
-    "4",
-    "5",
-    "6",
-    "7",
-    "8",
-    "9",
-  ]);
+  // Единый шрифт KekaFont для KZ / RU номеров — больше не нужно
+  // разделять буквы по наборам (roadLetters) и переключать шрифты/трансформации.
 
   const renderKzLetters = (text = "AAA", customSize) => {
     return text.split("").map((char, index) => (
@@ -368,16 +345,8 @@ const NumberMaster = () => {
         style={{
           display: "inline-block",
           lineHeight: 1,
-          fontFamily: roadLetters.has(char)
-            ? "RoadNumbers"
-            : "Franklin Gothic Medium, Arial Narrow, Arial, sans-serif",
-          fontSize: customSize
-            ? customSize
-            : roadLetters.has(char)
-              ? "80px"
-              : "59px",
-          transform: roadLetters.has(char) ? "scaleX(1)" : "scaleX(0.88)",
-          marginTop: roadLetters.has(char) ? "0px" : "9px",
+          fontFamily: "KekaFont",
+          fontSize: customSize ? customSize : "70px",
         }}
       >
         {char}
@@ -392,16 +361,8 @@ const NumberMaster = () => {
         style={{
           display: "inline-block",
           lineHeight: 1,
-          fontFamily: roadLetters.has(char)
-            ? "RoadNumbers"
-            : "Franklin Gothic Medium, Arial Narrow, Arial, sans-serif",
-          fontSize: customSize
-            ? customSize
-            : roadLetters.has(char)
-              ? "95px"
-              : "73px",
-          transform: roadLetters.has(char) ? "scaleX(1)" : "scaleX(0.88)",
-          marginTop: roadLetters.has(char) ? "0px" : "10px",
+          fontFamily: "KekaFont",
+          fontSize: customSize ? customSize : "85px",
         }}
       >
         {char}
@@ -416,12 +377,8 @@ const NumberMaster = () => {
         style={{
           display: "inline-block",
           lineHeight: 1,
-          fontFamily: roadLetters.has(char)
-            ? "RoadNumbers"
-            : "Franklin Gothic Medium, Arial Narrow, Arial, sans-serif",
-          fontSize: roadLetters.has(char) ? "80px" : "59px",
-          transform: roadLetters.has(char) ? "scaleX(1)" : "scaleX(0.88)",
-          marginTop: roadLetters.has(char) ? "0px" : "9px",
+          fontFamily: "KekaFont",
+          fontSize: "70px",
         }}
       >
         {char}
@@ -436,16 +393,8 @@ const NumberMaster = () => {
         style={{
           display: "inline-block",
           lineHeight: 1,
-          fontFamily: roadLetters.has(char)
-            ? "RoadNumbers"
-            : "Franklin Gothic Medium, Arial Narrow, Arial, sans-serif",
-          fontSize: customSize
-            ? customSize
-            : roadLetters.has(char)
-              ? "115px"
-              : "85px",
-          transform: roadLetters.has(char) ? "scaleX(1)" : "scaleX(0.88)",
-          marginTop: roadLetters.has(char) ? "-15px" : "0px",
+          fontFamily: "KekaFont",
+          fontSize: customSize ? customSize : "100px",
         }}
       >
         {char}
@@ -612,7 +561,7 @@ const NumberMaster = () => {
       });
     }
   };
-  
+
   return (
     <div className={scss.platePage}>
       <div className={scss.container}>
