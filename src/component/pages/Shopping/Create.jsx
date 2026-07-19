@@ -19,6 +19,7 @@ const Create = () => {
 
   const [loading, setLoading] = useState(false);
   const [userAdsCount, setUserAdsCount] = useState(0);
+  const [showLimitModal, setShowLimitModal] = useState(false);
 
   const [title, setTitle] = useState("");
   const [price, setPrice] = useState("");
@@ -58,9 +59,42 @@ const Create = () => {
   const currentUserEmail = profile.email;
   const currentUserPlan = profile.plan || "free";
   const currentUserRole = profile.role || "member";
-  const currentUserMarketStatus = profile.marketStatus || "inactive";
+  const currentUserIsBanned = profile.isBanned || false;
+  const currentUserMarketRestricted = profile.marketStatus === "restricted";
 
-  const maxLimit = currentUserPlan === "vip" ? 20 : 10;
+  const maxLimit = profile.adsLimit || (currentUserPlan === "vip" ? 20 : 5);
+
+  const limitReached = userAdsCount >= maxLimit;
+
+  if (currentUserIsBanned || currentUserMarketRestricted) {
+    return (
+      <main
+        role="main"
+        style={{ textAlign: "center", marginTop: "50px", padding: "20px" }}
+      >
+        <h2 style={{ color: "red" }}>Доступ к авторынку ограничен</h2>
+        <p>
+          Ваш аккаунт был ограничен администрацией клана
+          {profile.banReason ? `: ${profile.banReason}` : "."}
+        </p>
+        <p>Если считаете это ошибкой, свяжитесь с администрацией клана.</p>
+        <button
+          onClick={() => window.open("https://t.me/kka_07")}
+          style={{
+            marginTop: "15px",
+            padding: "10px 20px",
+            borderRadius: "8px",
+            border: "none",
+            background: "#0088cc",
+            color: "#fff",
+            cursor: "pointer",
+          }}
+        >
+          💬 Связаться с администрацией
+        </button>
+      </main>
+    );
+  }
 
   const handleImageChange = (index, e) => {
     const file = e.target.files[0];
@@ -97,15 +131,9 @@ const Create = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    if (currentUserMarketStatus !== "active") {
-      return toast.error(
-        "У вас нет доступа к публикациям. Обратитесь к администрации.",
-      );
-    }
-    if (userAdsCount >= maxLimit) {
-      return toast.error(
-        `Вы исчерпали свой лимит объявлений (${maxLimit} шт.)`,
-      );
+    if (limitReached) {
+      setShowLimitModal(true);
+      return;
     }
     if (!images[0]) {
       return toast.warning(
@@ -184,6 +212,39 @@ const Create = () => {
             После публикации объявление моментально появится на авторынке клана.
           </p>
         </header>
+
+        {limitReached && (
+          <div
+            style={{
+              background: "#fff3cd",
+              color: "#7a5c00",
+              padding: "14px 18px",
+              borderRadius: "10px",
+              marginBottom: "20px",
+              textAlign: "center",
+            }}
+          >
+            Вы использовали все {maxLimit} бесплатных объявления. Чтобы
+            размещать больше, оформите VIP-тариф.
+            <div>
+              <button
+                type="button"
+                onClick={() => setShowLimitModal(true)}
+                style={{
+                  marginTop: "10px",
+                  padding: "8px 16px",
+                  borderRadius: "8px",
+                  border: "none",
+                  background: "#f5a623",
+                  color: "#fff",
+                  cursor: "pointer",
+                }}
+              >
+                ⭐ Оформить VIP
+              </button>
+            </div>
+          </div>
+        )}
 
         <form onSubmit={handleSubmit} className={scss.content}>
           <div className={scss.profileMobile}>
@@ -392,16 +453,83 @@ const Create = () => {
                 <li>✔ Максимум 3 фотографии.</li>
                 <li>✔ Только реальные цены.</li>
                 <li>✔ Запрещено мошенничество.</li>
-                <li>✔ Нарушение правил карается мгновенным скрытием авто.</li>
+                <li>
+                  ✔ Нарушение правил карается мгновенным скрытием авто и
+                  блокировкой аккаунта.
+                </li>
               </ul>
             </section>
 
-            <button type="submit" disabled={loading}>
-              {loading ? "Загрузка..." : "Опубликовать автомобиль"}
+            <button type="submit" disabled={loading || limitReached}>
+              {loading
+                ? "Загрузка..."
+                : limitReached
+                  ? "Лимит объявлений исчерпан"
+                  : "Опубликовать автомобиль"}
             </button>
           </div>
         </form>
       </div>
+
+      {showLimitModal && (
+        <div
+          style={{
+            position: "fixed",
+            inset: 0,
+            background: "rgba(0,0,0,0.6)",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            zIndex: 1000,
+          }}
+          onClick={() => setShowLimitModal(false)}
+        >
+          <div
+            onClick={(e) => e.stopPropagation()}
+            style={{
+              background: "#fff",
+              borderRadius: "16px",
+              padding: "30px",
+              maxWidth: "400px",
+              width: "90%",
+              textAlign: "center",
+            }}
+          >
+            <h2 style={{ marginBottom: "10px" }}>Лимит исчерпан</h2>
+            <p style={{ marginBottom: "20px" }}>
+              Вы уже разместили {maxLimit} бесплатных объявления. Чтобы
+              публиковать больше автомобилей, оформите VIP-тариф у администрации
+              клана.
+            </p>
+            <button
+              onClick={() => window.open("https://t.me/kka_07")}
+              style={{
+                padding: "10px 20px",
+                borderRadius: "8px",
+                border: "none",
+                background: "#0088cc",
+                color: "#fff",
+                cursor: "pointer",
+                marginRight: "10px",
+              }}
+            >
+              💬 Оформить VIP
+            </button>
+            <button
+              onClick={() => setShowLimitModal(false)}
+              style={{
+                padding: "10px 20px",
+                borderRadius: "8px",
+                border: "1px solid #ccc",
+                background: "#fff",
+                cursor: "pointer",
+              }}
+            >
+              Закрыть
+            </button>
+          </div>
+        </div>
+      )}
     </main>
   );
 };

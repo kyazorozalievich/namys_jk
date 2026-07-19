@@ -208,7 +208,7 @@ const AdminPage = () => {
     try {
       await updateDoc(doc(db, "users", userId), {
         plan: newPlan,
-        adsLimit: newPlan === "vip" ? 20 : 10,
+        adsLimit: newPlan === "vip" ? 20 : 5,
       });
       toast.success(
         `Тариф изменен на ${newPlan === "vip" ? "VIP" : "Базовый"}`,
@@ -233,14 +233,25 @@ const AdminPage = () => {
 
   const handleToggleBan = async (user) => {
     const willBan = !user.isBanned;
+    let reason = "";
+
+    if (willBan) {
+      reason =
+        window.prompt(
+          "Укажите причину блокировки (мошенничество, нарушение правил и т.д.):",
+          "",
+        ) || "Не указана";
+    }
+
     try {
       const updateData = {
         isBanned: willBan,
         marketStatus: willBan ? "restricted" : "active",
+        banReason: willBan ? reason : "",
       };
       if (willBan) {
         updateData.plan = "free";
-        updateData.adsLimit = 10;
+        updateData.adsLimit = 5;
       }
       await updateDoc(doc(db, "users", user.id), updateData);
 
@@ -266,9 +277,7 @@ const AdminPage = () => {
       }
 
       if (willBan) {
-        toast.error(
-          "Пользователь ЗАБЛОКИРОВАН, объявления переведены в ожидание",
-        );
+        toast.error(`Пользователь ЗАБЛОКИРОВАН (${reason}), объявления скрыты`);
       } else {
         toast.success(
           "Пользователь успешно разблокирован, объявления активны!",
@@ -295,9 +304,8 @@ const AdminPage = () => {
   const getUserPriority = (user) => {
     if (user.isBanned) return 3;
     if (user.plan === "vip") return 0;
-    if ((user.adsLimit || 10) >= 10 && user.marketStatus !== "restricted")
-      return 1;
-    return 2;
+    if (user.marketStatus === "restricted") return 2;
+    return 1;
   };
 
   const filteredUsers = users
@@ -521,6 +529,7 @@ const AdminPage = () => {
                           {user.isBanned && (
                             <span className={scss.bannedText}>
                               Заблокирован
+                              {user.banReason ? ` — ${user.banReason}` : ""}
                             </span>
                           )}
                         </div>
@@ -539,14 +548,14 @@ const AdminPage = () => {
                       <td>
                         <div className={scss.specs}>
                           <strong>
-                            {user.adsUsed || 0} из {user.adsLimit || 10}
+                            {user.adsUsed || 0} из {user.adsLimit || 5}
                           </strong>
                         </div>
                       </td>
                       <td>
                         <select
                           className={scss.statusSelect}
-                          value={user.marketStatus || "restricted"}
+                          value={user.marketStatus || "active"}
                           onChange={(e) =>
                             handleUpdateMarketStatus(user.id, e.target.value)
                           }
@@ -564,7 +573,9 @@ const AdminPage = () => {
                             }
                             onClick={() => handleToggleBan(user)}
                           >
-                            {user.isBanned ? "Разблокировать" : "Забанить"}
+                            {user.isBanned
+                              ? "Разблокировать"
+                              : "Забанить (мошенничество)"}
                           </button>
                         </div>
                       </td>

@@ -15,9 +15,11 @@ const ProfileMenu = () => {
     return <h2 className={scss.errorAuth}>Профиль не найден</h2>;
   }
 
-  const adsLimit = profile.plan === "vip" ? 20 : 10;
+  const adsLimit = profile.adsLimit || (profile.plan === "vip" ? 20 : 5);
   const adsUsed = profile.adsUsed || 0;
   const freeSlots = Math.max(adsLimit - adsUsed, 0);
+  const marketAllowed =
+    !profile.isBanned && profile.marketStatus !== "restricted";
 
   return (
     <main className={scss.profilePage}>
@@ -51,11 +53,11 @@ const ProfileMenu = () => {
             <div className={scss.item}>
               <span>Доступ к рынку</span>
               <h3>
-                {profile.marketStatus === "active"
-                  ? "✅ Активен"
-                  : profile.marketStatus === "blocked"
-                    ? "🚫 Заблокирован"
-                    : "❌ Нет доступа"}
+                {profile.isBanned
+                  ? "🚫 Заблокирован"
+                  : marketAllowed
+                    ? "✅ Активен"
+                    : "🚫 Ограничен"}
               </h3>
             </div>
             <div className={scss.item}>
@@ -103,7 +105,18 @@ const ProfileMenu = () => {
 
           <aside className={scss.marketInfo}>
             <h2>Авторынок Namys JK</h2>
-            {profile.marketStatus === "active" ? (
+            {profile.isBanned ? (
+              <>
+                <p>🚫 Ваш аккаунт заблокирован администрацией клана.</p>
+                {profile.banReason && <p>Причина: {profile.banReason}</p>}
+                <button
+                  className={scss.telegram}
+                  onClick={() => window.open("https://t.me/kka_07")}
+                >
+                  💬 Связаться с администрацией
+                </button>
+              </>
+            ) : freeSlots > 0 ? (
               <>
                 <p>✅ У вас есть доступ к публикации автомобилей.</p>
                 <p>
@@ -112,13 +125,13 @@ const ProfileMenu = () => {
               </>
             ) : (
               <>
-                <p>🔒 Доступ к публикации автомобилей отсутствует.</p>
-                <p>Для получения доступа обратитесь к администрации клана.</p>
+                <p>🔒 Бесплатный лимит объявлений исчерпан.</p>
+                <p>Оформите VIP-тариф, чтобы разместить больше автомобилей.</p>
                 <button
                   className={scss.telegram}
                   onClick={() => window.open("https://t.me/kka_07")}
                 >
-                  💬 Связаться с администрацией
+                  ⭐ Оформить VIP
                 </button>
               </>
             )}
