@@ -204,15 +204,22 @@
         }
 
         .login {
-          width: 40px;
-          height: 35px;
+          flex-direction: column;
+          width: 52px;
+          height: 44px;
+          gap: 2px;
+          padding: 4px;
+          border-radius: 8px;
 
           span {
-            display: none;
+            display: block;
+            font-size: 10px;
+            line-height: 1;
+            order: -1;
           }
 
           svg {
-            font-size: 18px;
+            font-size: 17px;
           }
         }
       }
