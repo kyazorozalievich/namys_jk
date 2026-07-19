@@ -14,6 +14,35 @@ import {
 import { ref, uploadBytesResumable, getDownloadURL } from "firebase/storage";
 import { useUserProfile } from "../../layout/Profile/useUserProfile";
 
+const compressImage = (file, maxWidth = 1280, quality = 0.75) => {
+  return new Promise((resolve, reject) => {
+    const img = new Image();
+    const objectUrl = URL.createObjectURL(file);
+    img.onload = () => {
+      const scale = Math.min(1, maxWidth / img.width);
+      const canvas = document.createElement("canvas");
+      canvas.width = img.width * scale;
+      canvas.height = img.height * scale;
+      const ctx = canvas.getContext("2d");
+      ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+      canvas.toBlob(
+        (blob) => {
+          URL.revokeObjectURL(objectUrl);
+          if (!blob) return reject(new Error("Compression failed"));
+          resolve(new File([blob], file.name, { type: "image/jpeg" }));
+        },
+        "image/jpeg",
+        quality,
+      );
+    };
+    img.onerror = (err) => {
+      URL.revokeObjectURL(objectUrl);
+      reject(err);
+    };
+    img.src = objectUrl;
+  });
+};
+
 const Create = () => {
   const { profile, loading: profileLoading } = useUserProfile();
 
@@ -62,7 +91,9 @@ const Create = () => {
   const currentUserIsBanned = profile.isBanned || false;
   const currentUserMarketRestricted = profile.marketStatus === "restricted";
 
-  const maxLimit = profile.adsLimit || (currentUserPlan === "vip" ? 20 : 5);
+  const maxLimit =
+    profile.adsLimit ||
+    (currentUserPlan === "vip" ? 20 : currentUserPlan === "base" ? 10 : 5);
 
   const limitReached = userAdsCount >= maxLimit;
 
@@ -115,7 +146,9 @@ const Create = () => {
   const uploadImageAsync = (file, uid) => {
     return new Promise((resolve, reject) => {
       const storageRef = ref(storage, `cars/${uid}/${Date.now()}_${file.name}`);
-      const uploadTask = uploadBytesResumable(storageRef, file);
+      const uploadTask = uploadBytesResumable(storageRef, file, {
+        cacheControl: "public, max-age=31536000",
+      });
       uploadTask.on(
         "state_changed",
         null,
@@ -147,7 +180,11 @@ const Create = () => {
     setLoading(true);
 
     try {
-      const uploadPromises = images.map((img) =>
+      const compressedImages = await Promise.all(
+        images.map((img) => (img ? compressImage(img) : null)),
+      );
+
+      const uploadPromises = compressedImages.map((img) =>
         img ? uploadImageAsync(img, currentUserUid) : null,
       );
       const uploadedUrls = await Promise.all(uploadPromises);
@@ -224,8 +261,8 @@ const Create = () => {
               textAlign: "center",
             }}
           >
-            Вы использовали все {maxLimit} бесплатных объявления. Чтобы
-            размещать больше, оформите VIP-тариф.
+            Вы использовали все {maxLimit} объявления по вашему тарифу. Чтобы
+            размещать больше, оформите более высокий тариф.
             <div>
               <button
                 type="button"
@@ -240,7 +277,7 @@ const Create = () => {
                   cursor: "pointer",
                 }}
               >
-                ⭐ Оформить VIP
+                ⭐ Повысить тариф
               </button>
             </div>
           </div>
@@ -254,7 +291,13 @@ const Create = () => {
                 <FaCar aria-hidden="true" />
                 <div>
                   <span>Тариф</span>
-                  <p>{currentUserPlan === "vip" ? "⭐ VIP" : "👤 FREE"}</p>
+                  <p>
+                    {currentUserPlan === "vip"
+                      ? "⭐ VIP"
+                      : currentUserPlan === "base"
+                        ? "Базовый"
+                        : "👤 FREE"}
+                  </p>
                 </div>
               </div>
               <div className={scss.info}>
@@ -432,7 +475,13 @@ const Create = () => {
                   <FaCar aria-hidden="true" />
                   <div>
                     <span>Тариф</span>
-                    <p>{currentUserPlan === "vip" ? "⭐ VIP" : "👤 FREE"}</p>
+                    <p>
+                      {currentUserPlan === "vip"
+                        ? "⭐ VIP"
+                        : currentUserPlan === "base"
+                          ? "Базовый"
+                          : "👤 FREE"}
+                    </p>
                   </div>
                 </div>
                 <div className={scss.info}>
@@ -497,9 +546,9 @@ const Create = () => {
           >
             <h2 style={{ marginBottom: "10px" }}>Лимит исчерпан</h2>
             <p style={{ marginBottom: "20px" }}>
-              Вы уже разместили {maxLimit} бесплатных объявления. Чтобы
-              публиковать больше автомобилей, оформите VIP-тариф у администрации
-              клана.
+              Вы уже разместили {maxLimit} объявления по вашему тарифу. Чтобы
+              публиковать больше автомобилей, обратитесь к администрации клана
+              для повышения тарифа.
             </p>
             <button
               onClick={() => window.open("https://t.me/kka_07")}
@@ -513,7 +562,7 @@ const Create = () => {
                 marginRight: "10px",
               }}
             >
-              💬 Оформить VIP
+              💬 Связаться с администрацией
             </button>
             <button
               onClick={() => setShowLimitModal(false)}
