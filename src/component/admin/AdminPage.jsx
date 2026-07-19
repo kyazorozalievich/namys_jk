@@ -16,6 +16,14 @@ import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import scss from "./AdminPage.module.scss";
 
+const PLAN_ORDER = ["free", "base", "vip"];
+const PLAN_LIMITS = { free: 5, base: 10, vip: 20 };
+const PLAN_LABELS = {
+  free: "Бесплатный",
+  base: "Базовый",
+  vip: "⭐ VIP План",
+};
+
 const AdminPage = () => {
   const [cars, setCars] = useState([]);
   const [users, setUsers] = useState([]);
@@ -204,14 +212,17 @@ const AdminPage = () => {
   };
 
   const handleToggleUserPlan = async (userId, currentPlan) => {
-    const newPlan = currentPlan === "vip" ? "free" : "vip";
+    const currentIndex = PLAN_ORDER.indexOf(currentPlan || "free");
+    const nextPlan = PLAN_ORDER[(currentIndex + 1) % PLAN_ORDER.length];
+    const nextLimit = PLAN_LIMITS[nextPlan];
+
     try {
       await updateDoc(doc(db, "users", userId), {
-        plan: newPlan,
-        adsLimit: newPlan === "vip" ? 20 : 5,
+        plan: nextPlan,
+        adsLimit: nextLimit,
       });
       toast.success(
-        `Тариф изменен на ${newPlan === "vip" ? "VIP" : "Базовый"}`,
+        `Тариф изменен на: ${PLAN_LABELS[nextPlan]} (лимит ${nextLimit})`,
       );
     } catch (e) {
       console.error(e);
@@ -336,6 +347,12 @@ const AdminPage = () => {
       };
       reader.readAsDataURL(file);
     }
+  };
+
+  const getPlanBadgeClass = (plan) => {
+    if (plan === "vip") return scss.vipTariff;
+    if (plan === "base") return scss.baseTariff;
+    return scss.freeTariff || "";
   };
 
   return (
@@ -518,69 +535,75 @@ const AdminPage = () => {
                   </tr>
                 </thead>
                 <tbody>
-                  {filteredUsers.map((user) => (
-                    <tr
-                      key={user.id}
-                      className={user.isBanned ? scss.bannedRow : ""}
-                    >
-                      <td>
-                        <div className={scss.carInfo}>
-                          <strong>{user.email}</strong>
-                          {user.isBanned && (
-                            <span className={scss.bannedText}>
-                              Заблокирован
-                              {user.banReason ? ` — ${user.banReason}` : ""}
-                            </span>
-                          )}
-                        </div>
-                      </td>
-                      <td>
-                        <button
-                          type="button"
-                          className={`${scss.tariffBadge} ${user.plan === "vip" ? scss.vipTariff : scss.baseTariff}`}
-                          onClick={() =>
-                            handleToggleUserPlan(user.id, user.plan)
-                          }
-                        >
-                          {user.plan === "vip" ? "⭐ VIP План" : "Базовый"}
-                        </button>
-                      </td>
-                      <td>
-                        <div className={scss.specs}>
-                          <strong>
-                            {user.adsUsed || 0} из {user.adsLimit || 5}
-                          </strong>
-                        </div>
-                      </td>
-                      <td>
-                        <select
-                          className={scss.statusSelect}
-                          value={user.marketStatus || "active"}
-                          onChange={(e) =>
-                            handleUpdateMarketStatus(user.id, e.target.value)
-                          }
-                          disabled={user.isBanned}
-                        >
-                          <option value="active">Разрешен</option>
-                          <option value="restricted">Запрещен</option>
-                        </select>
-                      </td>
-                      <td>
-                        <div className={scss.actions}>
+                  {filteredUsers.map((user) => {
+                    const userPlan =
+                      user.plan === "vip" || user.plan === "base"
+                        ? user.plan
+                        : "free";
+                    return (
+                      <tr
+                        key={user.id}
+                        className={user.isBanned ? scss.bannedRow : ""}
+                      >
+                        <td>
+                          <div className={scss.carInfo}>
+                            <strong>{user.email}</strong>
+                            {user.isBanned && (
+                              <span className={scss.bannedText}>
+                                Заблокирован
+                                {user.banReason ? ` — ${user.banReason}` : ""}
+                              </span>
+                            )}
+                          </div>
+                        </td>
+                        <td>
                           <button
-                            className={
-                              user.isBanned ? scss.btnUnban : scss.btnBan
+                            type="button"
+                            className={`${scss.tariffBadge} ${getPlanBadgeClass(userPlan)}`}
+                            onClick={() =>
+                              handleToggleUserPlan(user.id, userPlan)
                             }
-                            onClick={() => handleToggleBan(user)}
                           >
-                            {user.isBanned
-                              ? "Разблокировать"
-                              : "Забанить (мошенничество)"}
+                            {PLAN_LABELS[userPlan]}
                           </button>
-                        </div>
-                      </td>
-                    </tr>
-                  ))}
+                        </td>
+                        <td>
+                          <div className={scss.specs}>
+                            <strong>
+                              {user.adsUsed || 0} из {user.adsLimit || 5}
+                            </strong>
+                          </div>
+                        </td>
+                        <td>
+                          <select
+                            className={scss.statusSelect}
+                            value={user.marketStatus || "active"}
+                            onChange={(e) =>
+                              handleUpdateMarketStatus(user.id, e.target.value)
+                            }
+                            disabled={user.isBanned}
+                          >
+                            <option value="active">Разрешен</option>
+                            <option value="restricted">Запрещен</option>
+                          </select>
+                        </td>
+                        <td>
+                          <div className={scss.actions}>
+                            <button
+                              className={
+                                user.isBanned ? scss.btnUnban : scss.btnBan
+                              }
+                              onClick={() => handleToggleBan(user)}
+                            >
+                              {user.isBanned
+                                ? "Разблокировать"
+                                : "Забанить (мошенничество)"}
+                            </button>
+                          </div>
+                        </td>
+                      </tr>
+                    );
+                  })}
                   {filteredUsers.length === 0 && (
                     <tr>
                       <td colSpan="6" className={scss.noResults}>
