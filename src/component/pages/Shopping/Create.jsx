@@ -68,6 +68,12 @@ const Create = () => {
     }
   }, [profile]);
 
+  useEffect(() => {
+    if (!profileLoading && !profile) {
+      toast.error("Пожалуйста, войдите через Google, чтобы разместить авто!");
+    }
+  }, [profileLoading, profile]);
+
   if (profileLoading) {
     return (
       <h2 style={{ textAlign: "center", marginTop: "50px" }}>
@@ -78,9 +84,13 @@ const Create = () => {
 
   if (!profile) {
     return (
-      <h2 style={{ textAlign: "center", color: "red", marginTop: "50px" }}>
-        Пожалуйста, войдите в аккаунт!
-      </h2>
+      <main
+        role="main"
+        style={{ textAlign: "center", marginTop: "50px", padding: "20px" }}
+      >
+        <h2 style={{ color: "red" }}>Пожалуйста, войдите в аккаунт!</h2>
+        <p>Авторизуйтесь через Google, чтобы получить доступ к авторынку.</p>
+      </main>
     );
   }
 
@@ -164,6 +174,11 @@ const Create = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
+    if (!profile || !profile.uid) {
+      return toast.error(
+        "Пожалуйста, войдите через Google, чтобы опубликовать объявление!",
+      );
+    }
     if (limitReached) {
       setShowLimitModal(true);
       return;
