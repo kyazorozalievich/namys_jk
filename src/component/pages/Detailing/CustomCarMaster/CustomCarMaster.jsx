@@ -120,7 +120,7 @@ const CustomCarMaster = () => {
       `🛠️ <b>Что нужно сделать:</b> ${escapeHtml(selectedServices.join(", "))}\n` +
       `📞 <b>Связь (${escapeHtml(contactType)}):</b> ${escapeHtml(contactValue)}\n\n` +
       `<i>Клиент переходит в группу для обсуждения цены.</i>\n` +
-      `<b>Мастера: @ffeedu / @Isko_1337 / Emka</b>`;
+      `<b>Мастер: @nurel77777</b>`;
 
     try {
       await fetch(`https://api.telegram.org/bot${TG_BOT_TOKEN}/sendMessage`, {
